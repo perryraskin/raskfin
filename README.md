@@ -22,3 +22,4 @@ I really needed something ultra custom for managing my personal finances so here
 - [Neon](https://neon.tech) – database
 - [Vercel](https://vercel.com/) – hosting
 - [Resend](https://resend.com/) – emails
+- [Teller](https://teller.io) - banking API
