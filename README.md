@@ -18,7 +18,7 @@ I really needed something ultra custom for managing my personal finances so here
 
 - [Next.js](https://nextjs.org/) – framework
 - [Tailwind](https://tailwindcss.com/) – CSS
-- [Tremor](https://www.tremor.so) - UI Components
+- [Tremor](https://www.tremor.so) - UI components
 - [Neon](https://neon.tech) – database
 - [Vercel](https://vercel.com/) – hosting
 - [Resend](https://resend.com/) – emails
