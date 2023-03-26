@@ -1,4 +1,4 @@
-import styles from "/styles/Header.module.css"
+import styles from "@/styles/Header.module.css"
 import Image from "next/image"
 import Link from "next/link"
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
@@ -14,7 +14,7 @@ const Header = () => (
     <div className={styles.left}>
       <Link href="/" className={styles.logo}>
         <Image src="/logo.svg" width="32" height="32" alt="Logo" />
-        <span className={styles.appName}>Your application</span>
+        <span className={styles.appName}>RaskFIN</span>
       </Link>
     </div>
     <div className={styles.right}>
