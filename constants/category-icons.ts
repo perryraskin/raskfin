@@ -27,7 +27,7 @@ interface CategoryIconDict {
 export const categoryIconDict: CategoryIconDict = {
   uncategorized: {
     icon: QuestionMarkCircleIcon,
-    color: "gray",
+    color: "neutral",
   },
   shopping: {
     icon: ShoppingBagIcon,
@@ -49,11 +49,7 @@ export const categoryIconDict: CategoryIconDict = {
     icon: ShoppingCartIcon,
     color: "indigo",
   },
-  transportation: {
-    icon: TruckIcon,
-    color: "orange",
-  },
-  transport: {
+  transit: {
     icon: TruckIcon,
     color: "orange",
   },
@@ -79,6 +75,6 @@ export const categoryIconDict: CategoryIconDict = {
   },
   general: {
     icon: CubeTransparentIcon,
-    color: "gray",
+    color: "slate",
   },
 }

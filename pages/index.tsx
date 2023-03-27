@@ -249,6 +249,11 @@ import {
   Metric,
   BarChart,
   Color,
+  DeltaBar,
+  DonutChart,
+  Dropdown,
+  DropdownItem,
+  Col,
 } from "@tremor/react"
 import {
   BriefcaseIcon,
@@ -267,7 +272,7 @@ import {
 } from "@heroicons/react/24/solid"
 import dayjs from "dayjs"
 import numeral from "numeral"
-import { CategoryStat, StatsResponse } from "@/types"
+import { CategoryStat, CategoryStatData, StatsResponse } from "@/types"
 import { categoryIconDict } from "@/constants/category-icons"
 import { capitalize, classNames, valueFormatter } from "@/helpers"
 
@@ -356,6 +361,13 @@ const Home = () => {
   const [loading, setLoading] = React.useState(true)
   const [selectedView, setSelectedView] = React.useState("1")
   const [currentMonth, setCurrentMonth] = React.useState<CategoryStat>()
+  const [currentMonthCategories, setCurrentMonthCategories] = React.useState<
+    CategoryStatData[]
+  >([])
+  React.useEffect(() => {
+    setCurrentMonthCategories(currentMonth?.dataList || [])
+  }, [currentMonth])
+
   const [months, setMonths] = React.useState<CategoryStat[]>([])
 
   React.useEffect(() => {
@@ -367,11 +379,14 @@ const Home = () => {
       _currentMonth.dataList.forEach((category) => {
         // @ts-ignore
         // console.log(category)
-        category.name = capitalize(category.name)
+
         // @ts-ignore
-        category.icon = categoryIconDict[category.name]?.icon
+        category.icon = categoryIconDict[category.name || "uncategorized"]?.icon
         // @ts-ignore
-        category.color = categoryIconDict[category.name]?.color
+        category.color =
+          categoryIconDict[category.name || "uncategorized"]?.color
+
+        category.name = capitalize(category.name || "uncategorized")
       })
       console.log(_currentMonth)
       setCurrentMonth(_currentMonth)
@@ -381,16 +396,19 @@ const Home = () => {
         const _3rdAmount = month.dataList[2]?.amount || 0
         month.dataList.forEach((category, i) => {
           if (category.amount < _3rdAmount) {
-            delete month.dataList[i]
+            category.showInStatCard = false
           }
           //
           else {
+            category.showInStatCard = true
             // @ts-ignore
             // console.log(category)
             // @ts-ignore
-            category.icon = categoryIconDict[category.name]?.icon
+            category.icon =
+              categoryIconDict[category.name || "uncategorized"]?.icon
             // @ts-ignore
-            category.color = categoryIconDict[category.name]?.color
+            category.color =
+              categoryIconDict[category.name || "uncategorized"]?.color
           }
         })
       })
@@ -440,43 +458,80 @@ const Home = () => {
             </Card>
           ) : (
             <Card className="shadow-md">
-              <Title>This Month</Title>
-              <Text>{currentMonth?.name}</Text>
-              <BarChart
-                className="mt-4 h-80"
-                data={currentMonth?.dataList || []}
-                index="name"
-                categories={["amount"]}
-                colors={["sky"]}
-                valueFormatter={(value) => {
-                  return numeral(value).format("$0,0")
-                }}
-              />
-            </Card>
-          )}
-
-          <div className="mt-6">
-            <Grid numColsSm={2} numColsLg={3} className="gap-6 mt-4">
-              {loading
-                ? [1, 2, 3].map((i) => (
-                    <Card key={i} className="shadow-md">
-                      <div className="animate-pulse flex space-x-4">
-                        <div className="flex-1 space-y-4 py-1">
-                          <div className="h-4 bg-slate-300 rounded w-3/4"></div>
-                          <div className="space-y-2">
-                            <div className="h-4 bg-slate-300 rounded"></div>
-                            <div className="h-4 bg-slate-300 rounded w-5/6"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  ))
-                : [months[0], months[1], months[2]].map((item) => (
-                    <Card key={item.name} className="shadow-md">
-                      <Title>{item.name}</Title>
-                      {/* <Text>{item.name}</Text> */}
-                      <List>
-                        {item.dataList.map((category) => (
+              <div className="hidden sm:block">
+                <Flex
+                  className="space-x-4"
+                  justifyContent="start"
+                  alignItems="center"
+                >
+                  <Title className="truncate">
+                    Spendings by Category - {currentMonth?.name}
+                  </Title>
+                  <Dropdown
+                    onValueChange={(value) =>
+                      setCurrentMonth(
+                        months.find((month) => month.name === value)
+                      )
+                    }
+                    placeholder={currentMonth?.name}
+                    className="max-w-xs absolute right-4"
+                  >
+                    {months.map((month) => (
+                      <DropdownItem
+                        key={month.name}
+                        value={month.name}
+                        text={month.name}
+                      />
+                    ))}
+                  </Dropdown>
+                </Flex>
+              </div>
+              {/* --- Same code snippet as above but with no flex to optmize mobile view --- */}
+              <div className="sm:hidden">
+                <Title className="truncate">
+                  Spendings by Category - {currentMonth?.name}
+                </Title>
+                <Dropdown
+                  onValueChange={(value) =>
+                    setCurrentMonth(
+                      months.find((month) => month.name === value)
+                    )
+                  }
+                  placeholder="Industry Selection"
+                  className="max-w-full mt-2"
+                >
+                  {months.map((month) => (
+                    <DropdownItem
+                      key={month.name}
+                      value={month.name}
+                      text={month.name}
+                    />
+                  ))}
+                </Dropdown>
+              </div>
+              <Grid numColsLg={2} className="mt-8 gap-y-10 gap-x-14">
+                <Flex>
+                  <DonutChart
+                    colors={
+                      currentMonthCategories.map((category) => {
+                        return category.color
+                      }) as Color[]
+                    }
+                    data={currentMonth?.dataList || []}
+                    category="amount"
+                    index="name"
+                    variant="donut"
+                    valueFormatter={(value) => {
+                      return numeral(value).format("$0,0")
+                    }}
+                    className="h-72 sm:h-96"
+                  />
+                </Flex>
+                <Col numColSpan={1} numColSpanLg={1}>
+                  <div className="hidden sm:block">
+                    <List className="h-96 overflow-scroll">
+                      {currentMonthCategories.map((category) => {
+                        return (
                           <ListItem key={category.name}>
                             <Flex
                               justifyContent="start"
@@ -509,7 +564,117 @@ const Home = () => {
                                 .replace("-", "")}
                             </Text>
                           </ListItem>
-                        ))}
+                        )
+                      })}
+                    </List>
+                  </div>
+
+                  <div className="sm:hidden">
+                    <List className="h-96 overflow-scroll">
+                      {currentMonthCategories.map((category) => {
+                        return (
+                          <ListItem key={category.name}>
+                            <Flex
+                              justifyContent="start"
+                              className="truncate space-x-4"
+                            >
+                              <Icon
+                                variant="light"
+                                icon={category.icon || QuestionMarkCircleIcon}
+                                size="md"
+                                color={category.color}
+                              />
+                              <div className="truncate">
+                                <Text className="truncate">
+                                  <Bold className="text-gray-700">
+                                    {capitalize(category.name)}
+                                  </Bold>
+                                </Text>
+                                <Text className="truncate">
+                                  {`${category.numTransactions} transactions`}
+                                </Text>
+                              </div>
+                            </Flex>
+                            <Text
+                              className={classNames(
+                                category.amount < 0 ? "text-green-600" : ""
+                              )}
+                            >
+                              {numeral(category.amount)
+                                .format("$0,0.00")
+                                .replace("-", "")}
+                            </Text>
+                          </ListItem>
+                        )
+                      })}
+                    </List>
+                  </div>
+                </Col>
+              </Grid>
+            </Card>
+          )}
+
+          <div className="mt-6">
+            <Grid numColsSm={2} numColsLg={3} className="gap-6 mt-4">
+              {loading
+                ? [1, 2, 3].map((i) => (
+                    <Card key={i} className="shadow-md">
+                      <div className="animate-pulse flex space-x-4">
+                        <div className="flex-1 space-y-4 py-1">
+                          <div className="h-4 bg-slate-300 rounded w-3/4"></div>
+                          <div className="space-y-2">
+                            <div className="h-4 bg-slate-300 rounded"></div>
+                            <div className="h-4 bg-slate-300 rounded w-5/6"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))
+                : [months[0], months[1], months[2]].map((item) => (
+                    <Card key={item.name} className="shadow-md">
+                      <Title>{item.name}</Title>
+                      {/* <Text>{item.name}</Text> */}
+                      <List>
+                        {item.dataList.map((category) => {
+                          if (category.showInStatCard) {
+                            return (
+                              <ListItem key={category.name}>
+                                <Flex
+                                  justifyContent="start"
+                                  className="truncate space-x-4"
+                                >
+                                  <Icon
+                                    variant="light"
+                                    icon={
+                                      category.icon || QuestionMarkCircleIcon
+                                    }
+                                    size="md"
+                                    color={category.color}
+                                  />
+                                  <div className="truncate">
+                                    <Text className="truncate">
+                                      <Bold className="text-gray-700">
+                                        {capitalize(category.name)}
+                                      </Bold>
+                                    </Text>
+                                    <Text className="truncate">
+                                      {`${category.numTransactions} transactions`}
+                                    </Text>
+                                  </div>
+                                </Flex>
+                                <Text
+                                  className={classNames(
+                                    category.amount < 0 ? "text-green-600" : ""
+                                  )}
+                                >
+                                  {numeral(category.amount)
+                                    .format("$0,0.00")
+                                    .replace("-", "")}
+                                </Text>
+                              </ListItem>
+                            )
+                          }
+                        })}
                       </List>
                       <Button
                         size="xs"

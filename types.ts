@@ -1,6 +1,7 @@
 import { Color } from "@tremor/react"
 
 export interface CategoryStatData {
+  showInStatCard?: boolean
   name?: string
   icon?: React.ForwardRefExoticComponent<
     React.SVGProps<SVGSVGElement> & { title?: string; titleId?: string }
