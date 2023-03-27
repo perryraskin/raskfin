@@ -31,6 +31,7 @@ export default async function handler(
   }
 
   const today = dayjs()
+  const threeMonthsAgoStart = today.subtract(3, "month").startOf("month")
   const twoMonthsAgoStart = today.subtract(2, "month").startOf("month")
   const oneMonthAgoStart = today.subtract(1, "month").startOf("month")
   const thisMonthStart = today.startOf("month")
@@ -45,7 +46,8 @@ export default async function handler(
     transactions t
   WHERE 
     t.user_id = ${userId}
-    AND t.date >= ${twoMonthsAgoStart.toDate()}
+    AND t.date >= ${threeMonthsAgoStart.toDate()}
+    AND t.type != 'payment'
   GROUP BY
     month,
     category
@@ -55,6 +57,17 @@ export default async function handler(
 
   res.status(200).json({
     months: [
+      {
+        date: threeMonthsAgoStart.toDate(),
+        name: threeMonthsAgoStart.format("MMMM YYYY"),
+        dataList: months
+          .filter((m) => m.month === threeMonthsAgoStart.format("YYYY-MM"))
+          .map((m) => ({
+            name: m.category,
+            numTransactions: parseInt(m.count),
+            amount: parseFloat(m.total_amount),
+          })),
+      },
       {
         date: twoMonthsAgoStart.toDate(),
         name: twoMonthsAgoStart.format("MMMM YYYY"),

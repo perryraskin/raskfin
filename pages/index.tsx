@@ -248,6 +248,7 @@ import {
   Bold,
   Metric,
   BarChart,
+  Color,
 } from "@tremor/react"
 import {
   BriefcaseIcon,
@@ -262,6 +263,7 @@ import {
   LightBulbIcon,
   ShoppingCartIcon,
   TvIcon,
+  ArrowSmallRightIcon,
 } from "@heroicons/react/24/solid"
 import dayjs from "dayjs"
 import numeral from "numeral"
@@ -353,6 +355,7 @@ const Home = () => {
   const { user } = useUser()
   const [loading, setLoading] = React.useState(true)
   const [selectedView, setSelectedView] = React.useState("1")
+  const [currentMonth, setCurrentMonth] = React.useState<CategoryStat>()
   const [months, setMonths] = React.useState<CategoryStat[]>([])
 
   React.useEffect(() => {
@@ -360,7 +363,20 @@ const Home = () => {
       setLoading(true)
       const statsRes = await fetch("/api/stats")
       const stats: StatsResponse = await statsRes.json()
-      const _months = stats.months
+      const _currentMonth = stats.months[stats.months.length - 1]
+      _currentMonth.dataList.forEach((category) => {
+        // @ts-ignore
+        // console.log(category)
+        category.name = capitalize(category.name)
+        // @ts-ignore
+        category.icon = categoryIconDict[category.name]?.icon
+        // @ts-ignore
+        category.color = categoryIconDict[category.name]?.color
+      })
+      console.log(_currentMonth)
+      setCurrentMonth(_currentMonth)
+
+      const _months = JSON.parse(JSON.stringify(stats.months)) as CategoryStat[]
       _months.forEach((month) => {
         const _3rdAmount = month.dataList[2]?.amount || 0
         month.dataList.forEach((category, i) => {
@@ -396,109 +412,119 @@ const Home = () => {
         onValueChange={(value) => setSelectedView(value)}
         className="mt-6"
       >
-        <Tab value="1" text="Categories" />
-        <Tab value="2" text="Accounts" />
+        <Tab
+          value="1"
+          text="Categories"
+          className="text-gray-800 border-gray-800"
+        />
+        <Tab
+          value="2"
+          text="Accounts"
+          className="text-gray-800 border-gray-800"
+        />
       </TabList>
 
       {selectedView === "1" ? (
-        <>
-          <Grid numColsSm={2} numColsLg={3} className="gap-6 mt-4">
-            {loading
-              ? [1, 2, 3].map((i) => (
-                  <Card key={i} className="shadow-md">
-                    <div className="animate-pulse flex space-x-4">
-                      <div className="flex-1 space-y-4 py-1">
-                        <div className="h-4 bg-slate-300 rounded w-3/4"></div>
-                        <div className="space-y-2">
-                          <div className="h-4 bg-slate-300 rounded"></div>
-                          <div className="h-4 bg-slate-300 rounded w-5/6"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                ))
-              : months.map((item) => (
-                  <Card key={item.name} className="shadow-md">
-                    <Title>{item.name}</Title>
-                    {/* <Text>{item.name}</Text> */}
-                    <List className="mt-4">
-                      {item.dataList.map((category) => (
-                        <ListItem key={category.name}>
-                          <Flex
-                            justifyContent="start"
-                            className="truncate space-x-4"
-                          >
-                            <Icon
-                              variant="light"
-                              icon={category.icon || QuestionMarkCircleIcon}
-                              size="md"
-                              color={category.color}
-                            />
-                            <div className="truncate">
-                              <Text className="truncate">
-                                <Bold>{capitalize(category.name)}</Bold>
-                              </Text>
-                              <Text className="truncate">
-                                {`${category.numTransactions} transactions`}
-                              </Text>
-                            </div>
-                          </Flex>
-                          <Text
-                            className={classNames(
-                              category.amount < 0 ? "text-green-600" : ""
-                            )}
-                          >
-                            {numeral(category.amount)
-                              .format("$0,0.00")
-                              .replace("-", "")}
-                          </Text>
-                        </ListItem>
-                      ))}
-                    </List>
-                    <Button
-                      size="sm"
-                      variant="light"
-                      icon={ArrowRightIcon}
-                      iconPosition="right"
-                      className="mt-4"
-                    >
-                      View more categories
-                    </Button>
-                  </Card>
-                ))}
-          </Grid>
-
-          <div className="mt-6">
-            {loading ? (
-              <Card>
-                <div className="animate-pulse flex space-x-4">
-                  <div className="flex-1 space-y-4 py-1">
-                    <div className="h-12 bg-slate-300 rounded w-3/4"></div>
-                    <div className="space-y-2">
-                      <div className="h-12 bg-slate-300 rounded"></div>
-                      <div className="h-12 bg-slate-300 rounded w-5/6"></div>
-                    </div>
+        <div className="mt-4">
+          {loading ? (
+            <Card>
+              <div className="animate-pulse flex space-x-4">
+                <div className="flex-1 space-y-4 py-1">
+                  <div className="h-12 bg-slate-300 rounded w-3/4"></div>
+                  <div className="space-y-2">
+                    <div className="h-12 bg-slate-300 rounded"></div>
+                    <div className="h-12 bg-slate-300 rounded w-5/6"></div>
                   </div>
                 </div>
-              </Card>
-            ) : (
-              <Card className="shadow-md">
-                <Title>Ticket Monitoring</Title>
-                <Text>Tickets by Status</Text>
-                <BarChart
-                  className="mt-4 h-80"
-                  data={data}
-                  index="Month"
-                  categories={["Completed", "In Progress", "Failed"]}
-                  colors={["sky", "violet", "fuchsia"]}
-                  valueFormatter={valueFormatter}
-                  stack={true}
-                  relative={true}
-                />
-              </Card>
-            )}
+              </div>
+            </Card>
+          ) : (
+            <Card className="shadow-md">
+              <Title>This Month</Title>
+              <Text>{currentMonth?.name}</Text>
+              <BarChart
+                className="mt-4 h-80"
+                data={currentMonth?.dataList || []}
+                index="name"
+                categories={["amount"]}
+                colors={["sky"]}
+                valueFormatter={(value) => {
+                  return numeral(value).format("$0,0")
+                }}
+              />
+            </Card>
+          )}
+
+          <div className="mt-6">
+            <Grid numColsSm={2} numColsLg={3} className="gap-6 mt-4">
+              {loading
+                ? [1, 2, 3].map((i) => (
+                    <Card key={i} className="shadow-md">
+                      <div className="animate-pulse flex space-x-4">
+                        <div className="flex-1 space-y-4 py-1">
+                          <div className="h-4 bg-slate-300 rounded w-3/4"></div>
+                          <div className="space-y-2">
+                            <div className="h-4 bg-slate-300 rounded"></div>
+                            <div className="h-4 bg-slate-300 rounded w-5/6"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))
+                : [months[0], months[1], months[2]].map((item) => (
+                    <Card key={item.name} className="shadow-md">
+                      <Title>{item.name}</Title>
+                      {/* <Text>{item.name}</Text> */}
+                      <List>
+                        {item.dataList.map((category) => (
+                          <ListItem key={category.name}>
+                            <Flex
+                              justifyContent="start"
+                              className="truncate space-x-4"
+                            >
+                              <Icon
+                                variant="light"
+                                icon={category.icon || QuestionMarkCircleIcon}
+                                size="md"
+                                color={category.color}
+                              />
+                              <div className="truncate">
+                                <Text className="truncate">
+                                  <Bold className="text-gray-700">
+                                    {capitalize(category.name)}
+                                  </Bold>
+                                </Text>
+                                <Text className="truncate">
+                                  {`${category.numTransactions} transactions`}
+                                </Text>
+                              </div>
+                            </Flex>
+                            <Text
+                              className={classNames(
+                                category.amount < 0 ? "text-green-600" : ""
+                              )}
+                            >
+                              {numeral(category.amount)
+                                .format("$0,0.00")
+                                .replace("-", "")}
+                            </Text>
+                          </ListItem>
+                        ))}
+                      </List>
+                      <Button
+                        size="xs"
+                        variant="light"
+                        icon={ArrowSmallRightIcon}
+                        iconPosition="right"
+                        className="mt-4 text-gray-800 hover:text-gray-500"
+                      >
+                        Browse {item.name}
+                      </Button>
+                    </Card>
+                  ))}
+            </Grid>
           </div>
-        </>
+        </div>
       ) : (
         <div className="mt-6">
           <Card>
