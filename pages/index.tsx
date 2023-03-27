@@ -491,7 +491,7 @@ const Home = () => {
                       months.find((month) => month.name === value)
                     )
                   }
-                  placeholder="Industry Selection"
+                  placeholder={currentMonth?.name}
                   className="max-w-full mt-2"
                 >
                   {months.map((month) => (
