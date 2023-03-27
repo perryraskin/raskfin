@@ -416,7 +416,7 @@ const Home = () => {
 
   if (!user) return <></>
   return (
-    <main className="max-w-7xl mx-auto mt-10 px-4 xl:px-0">
+    <main className="max-w-7xl mx-auto mt-10 px-4 xl:px-0 bg-slate-100">
       <Title>Dashboard</Title>
       <Text>Lorem ipsum dolor sit amet, consetetur sadipscing elitr.</Text>
       <TabList
@@ -437,7 +437,7 @@ const Home = () => {
       </TabList>
 
       {selectedView === "1" ? (
-        <div className="mt-4">
+        <div className="mt-4 pb-20 bg-slate-100">
           {loading ? (
             <Card>
               <div className="animate-pulse flex space-x-4">
