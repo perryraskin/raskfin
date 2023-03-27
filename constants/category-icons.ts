@@ -12,6 +12,7 @@ import {
   LightBulbIcon,
   TvIcon,
   CubeTransparentIcon,
+  GiftIcon,
 } from "@heroicons/react/24/solid"
 import { Color } from "@tremor/react"
 
@@ -76,5 +77,9 @@ export const categoryIconDict: CategoryIconDict = {
   general: {
     icon: CubeTransparentIcon,
     color: "slate",
+  },
+  donations: {
+    icon: GiftIcon,
+    color: "green",
   },
 }

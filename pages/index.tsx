@@ -366,6 +366,7 @@ const Home = () => {
   >([])
   React.useEffect(() => {
     setCurrentMonthCategories(currentMonth?.dataList || [])
+    console.log(currentMonth)
   }, [currentMonth])
 
   const [months, setMonths] = React.useState<CategoryStat[]>([])
@@ -385,8 +386,6 @@ const Home = () => {
         // @ts-ignore
         category.color =
           categoryIconDict[category.name || "uncategorized"]?.color
-
-        category.name = capitalize(category.name || "uncategorized")
       })
       console.log(_currentMonth)
       setCurrentMonth(_currentMonth)
@@ -395,21 +394,16 @@ const Home = () => {
       _months.forEach((month) => {
         const _3rdAmount = month.dataList[2]?.amount || 0
         month.dataList.forEach((category, i) => {
-          if (category.amount < _3rdAmount) {
-            category.showInStatCard = false
-          }
-          //
-          else {
-            category.showInStatCard = true
-            // @ts-ignore
-            // console.log(category)
-            // @ts-ignore
-            category.icon =
-              categoryIconDict[category.name || "uncategorized"]?.icon
-            // @ts-ignore
-            category.color =
-              categoryIconDict[category.name || "uncategorized"]?.color
-          }
+          if (category.amount < _3rdAmount) category.showInStatCard = false
+          else category.showInStatCard = true
+          // @ts-ignore
+          // console.log(category)
+          // @ts-ignore
+          category.icon =
+            categoryIconDict[category.name || "uncategorized"]?.icon
+          // @ts-ignore
+          category.color =
+            categoryIconDict[category.name || "uncategorized"]?.color
         })
       })
 
