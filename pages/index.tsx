@@ -276,86 +276,6 @@ import { CategoryStat, CategoryStatData, StatsResponse } from "@/types"
 import { categoryIconDict } from "@/constants/category-icons"
 import { capitalize, classNames, valueFormatter } from "@/helpers"
 
-const data = [
-  {
-    Month: "Jan 21",
-    Failed: 2890,
-    Completed: 1400,
-    "In Progress": 4938,
-  },
-  {
-    Month: "Feb 21",
-    Failed: 1890,
-    Completed: 998,
-    "In Progress": 2938,
-  },
-  {
-    Month: "Mar 21",
-    Failed: 2190,
-    Completed: 1400,
-    "In Progress": 1638,
-  },
-  {
-    Month: "Apr 21",
-    Failed: 3470,
-    Completed: 2108,
-    "In Progress": 2138,
-  },
-  {
-    Month: "May 21",
-    Failed: 2170,
-    Completed: 1800,
-    "In Progress": 2142,
-  },
-  {
-    Month: "Jun 21",
-    Failed: 3170,
-    Completed: 1800,
-    "In Progress": 5120,
-  },
-  {
-    Month: "Jul 21",
-    Failed: 3490,
-    Completed: 2300,
-    "In Progress": 3890,
-  },
-  {
-    Month: "Aug 21",
-    Failed: 2190,
-    Completed: 1100,
-    "In Progress": 3165,
-  },
-  {
-    Month: "Sep 21",
-    Failed: 3344,
-    Completed: 1934,
-    "In Progress": 1945,
-  },
-  {
-    Month: "Oct 21",
-    Failed: 1564,
-    Completed: 1245,
-    "In Progress": 2345,
-  },
-  {
-    Month: "Nov 21",
-    Failed: 3345,
-    Completed: 2654,
-    "In Progress": 4845,
-  },
-  {
-    Month: "Dec 21",
-    Failed: 2740,
-    Completed: 2421,
-    "In Progress": 2945,
-  },
-  {
-    Month: "Jan 22",
-    Failed: 3890,
-    Completed: 2980,
-    "In Progress": 2645,
-  },
-]
 const Home = () => {
   const { user } = useUser()
   const [loading, setLoading] = React.useState(true)
@@ -540,7 +460,9 @@ const Home = () => {
                               <div className="truncate">
                                 <Text className="truncate">
                                   <Bold className="text-gray-700">
-                                    {capitalize(category.name)}
+                                    {capitalize(
+                                      category.name || "uncategorized"
+                                    )}
                                   </Bold>
                                 </Text>
                                 <Text className="truncate">
@@ -581,7 +503,9 @@ const Home = () => {
                               <div className="truncate">
                                 <Text className="truncate">
                                   <Bold className="text-gray-700">
-                                    {capitalize(category.name)}
+                                    {capitalize(
+                                      category.name || "uncategorized"
+                                    )}
                                   </Bold>
                                 </Text>
                                 <Text className="truncate">
@@ -648,7 +572,9 @@ const Home = () => {
                                   <div className="truncate">
                                     <Text className="truncate">
                                       <Bold className="text-gray-700">
-                                        {capitalize(category.name)}
+                                        {capitalize(
+                                          category.name || "uncategorized"
+                                        )}
                                       </Bold>
                                     </Text>
                                     <Text className="truncate">
