@@ -264,6 +264,8 @@ import {
   DeltaType,
   MultiSelectBox,
   MultiSelectBoxItem,
+  DateRangePicker,
+  DateRangePickerValue,
 } from "@tremor/react"
 import {
   BriefcaseIcon,
@@ -312,12 +314,19 @@ const Home = () => {
 
   const [months, setMonths] = React.useState<CategoryStat[]>([])
   const [accounts, setAccounts] = React.useState<Account[]>([])
+  const [categories, setCategories] = React.useState<string[]>([])
   const [transactions, setTransactions] = React.useState<Transaction[]>([])
 
   async function getAccounts() {
     const res = await fetch("/api/accounts")
     const data = await res.json()
     setAccounts(data)
+  }
+
+  async function getCategories() {
+    const res = await fetch("/api/categories")
+    const data = await res.json()
+    setCategories(data)
   }
 
   async function getTransactions(
@@ -390,6 +399,7 @@ const Home = () => {
 
     async function init() {
       await getAccounts()
+      await getCategories()
       await getMonths()
       await getTransactions()
     }
@@ -706,19 +716,50 @@ const Home = () => {
       ) : (
         <div className="mt-6">
           <Card>
-            <MultiSelectBox
-              onValueChange={(value) => setSelectedAccountIds(value)}
-              placeholder="All accounts"
-              className="max-w-xs"
-            >
-              {accounts.map((account) => (
-                <MultiSelectBoxItem
-                  key={account.id}
-                  value={account.id}
-                  text={`${account.name} (${account.lastFour})`}
-                />
-              ))}
-            </MultiSelectBox>
+            <div className="sm:flex space-y-2 sm:space-y-0 sm:space-x-2 space-x-0 justify-end">
+              <MultiSelectBox
+                onValueChange={(value) => setSelectedCategoryIds(value)}
+                value={selectedCategoryIds}
+                placeholder="All categories"
+                className="sm:max-w-xs"
+              >
+                {categories.map((category) => (
+                  <MultiSelectBoxItem
+                    key={category}
+                    value={category}
+                    text={capitalize(category || "uncategorized")}
+                  />
+                ))}
+              </MultiSelectBox>
+              <MultiSelectBox
+                onValueChange={(value) => setSelectedAccountIds(value)}
+                value={selectedAccountIds}
+                placeholder="All accounts"
+                className="sm:max-w-xs"
+              >
+                {accounts.map((account) => (
+                  <MultiSelectBoxItem
+                    key={account.id}
+                    value={account.id}
+                    text={`${account.name} (${account.lastFour})`}
+                  />
+                ))}
+              </MultiSelectBox>
+              <DateRangePicker
+                className="sm:max-w-md mx-auto"
+                value={[
+                  dayjs(selectedDateFrom).utc().toDate(),
+                  dayjs(selectedDateTo).utc().toDate(),
+                ]}
+                onValueChange={(value: DateRangePickerValue) => {
+                  if (value && value[0] && value[1]) {
+                    setSelectedDateFrom(dayjs(value[0]).format("YYYY-MM-DD"))
+                    setSelectedDateTo(dayjs(value[1]).format("YYYY-MM-DD"))
+                  }
+                }}
+                dropdownPlaceholder="Select range"
+              />
+            </div>
             <Table className="mt-6">
               <TableHead>
                 <TableRow>
