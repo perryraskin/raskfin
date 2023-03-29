@@ -254,6 +254,16 @@ import {
   Dropdown,
   DropdownItem,
   Col,
+  Table,
+  TableRow,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  BadgeDelta,
+  DeltaType,
+  MultiSelectBox,
+  MultiSelectBoxItem,
 } from "@tremor/react"
 import {
   BriefcaseIcon,
@@ -271,14 +281,25 @@ import {
   ArrowSmallRightIcon,
 } from "@heroicons/react/24/solid"
 import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
+dayjs.extend(utc)
+dayjs.extend(timezone)
 import numeral from "numeral"
-import { CategoryStat, CategoryStatData, StatsResponse } from "@/types"
+import {
+  Account,
+  CategoryStat,
+  CategoryStatData,
+  StatsResponse,
+  Transaction,
+} from "@/types"
 import { categoryIconDict } from "@/constants/category-icons"
 import { capitalize, classNames, valueFormatter } from "@/helpers"
 
 const Home = () => {
   const { user } = useUser()
-  const [loading, setLoading] = React.useState(true)
+  const [loadingSummary, setLoadingSummary] = React.useState(true)
+  const [loadingData, setLoadingData] = React.useState(true)
   const [selectedView, setSelectedView] = React.useState("1")
   const [currentMonth, setCurrentMonth] = React.useState<CategoryStat>()
   const [currentMonthCategories, setCurrentMonthCategories] = React.useState<
@@ -290,10 +311,45 @@ const Home = () => {
   }, [currentMonth])
 
   const [months, setMonths] = React.useState<CategoryStat[]>([])
+  const [accounts, setAccounts] = React.useState<Account[]>([])
+  const [transactions, setTransactions] = React.useState<Transaction[]>([])
+
+  async function getAccounts() {
+    const res = await fetch("/api/accounts")
+    const data = await res.json()
+    setAccounts(data)
+  }
+
+  async function getTransactions(
+    dateFrom: string | undefined = dayjs()
+      .startOf("month")
+      .format("YYYY-MM-DD"),
+    dateTo: string | undefined = dayjs().format("YYYY-MM-DD"),
+    category: string[] | undefined = undefined,
+    accountId: string[] | undefined = undefined
+  ) {
+    setLoadingData(true)
+    const res = await fetch("/api/transactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        dateFrom,
+        dateTo,
+        category,
+        accountId,
+      }),
+    })
+    const data = await res.json()
+    console.log(data)
+    setTransactions(data)
+    setLoadingData(false)
+  }
 
   React.useEffect(() => {
     const getMonths = async () => {
-      setLoading(true)
+      setLoadingSummary(true)
       const statsRes = await fetch("/api/stats")
       const stats: StatsResponse = await statsRes.json()
       const _currentMonth = stats.months[stats.months.length - 1]
@@ -329,10 +385,44 @@ const Home = () => {
 
       console.log(_months)
       setMonths(_months)
-      setLoading(false)
+      setLoadingSummary(false)
     }
-    if (user) getMonths()
+
+    async function init() {
+      await getAccounts()
+      await getMonths()
+      await getTransactions()
+    }
+    if (user) {
+      init()
+    }
   }, [user])
+
+  const [selectedDateFrom, setSelectedDateFrom] = React.useState<string>(
+    dayjs().startOf("month").format("YYYY-MM-DD")
+  )
+  const [selectedDateTo, setSelectedDateTo] = React.useState<string>(
+    dayjs().format("YYYY-MM-DD")
+  )
+  const [selectedCategoryIds, setSelectedCategoryIds] = React.useState<
+    string[]
+  >([])
+  const [selectedAccountIds, setSelectedAccountIds] = React.useState<string[]>(
+    []
+  )
+  React.useEffect(() => {
+    getTransactions(
+      selectedDateFrom,
+      selectedDateTo,
+      selectedCategoryIds,
+      selectedAccountIds
+    )
+  }, [
+    selectedDateFrom,
+    selectedDateTo,
+    selectedCategoryIds,
+    selectedAccountIds,
+  ])
 
   if (!user) return <></>
   return (
@@ -346,19 +436,15 @@ const Home = () => {
       >
         <Tab
           value="1"
-          text="Categories"
+          text="Summary"
           className="text-gray-800 border-gray-800"
         />
-        <Tab
-          value="2"
-          text="Accounts"
-          className="text-gray-800 border-gray-800"
-        />
+        <Tab value="2" text="Data" className="text-gray-800 border-gray-800" />
       </TabList>
 
       {selectedView === "1" ? (
         <div className="mt-4 pb-20 bg-slate-100">
-          {loading ? (
+          {loadingSummary ? (
             <Card>
               <div className="animate-pulse flex space-x-4">
                 <div className="flex-1 space-y-4 py-1">
@@ -534,7 +620,7 @@ const Home = () => {
 
           <div className="mt-6">
             <Grid numColsSm={2} numColsLg={3} className="gap-6 mt-4">
-              {loading
+              {loadingSummary
                 ? [1, 2, 3].map((i) => (
                     <Card key={i} className="shadow-md">
                       <div className="animate-pulse flex space-x-4">
@@ -548,72 +634,143 @@ const Home = () => {
                       </div>
                     </Card>
                   ))
-                : [months[0], months[1], months[2]].map((item) => (
-                    <Card key={item.name} className="shadow-md">
-                      <Title>{item.name}</Title>
-                      {/* <Text>{item.name}</Text> */}
-                      <List>
-                        {item.dataList.map((category) => {
-                          if (category.showInStatCard) {
-                            return (
-                              <ListItem key={category.name}>
-                                <Flex
-                                  justifyContent="start"
-                                  className="truncate space-x-4"
-                                >
-                                  <Icon
-                                    variant="light"
-                                    icon={
-                                      category.icon || QuestionMarkCircleIcon
-                                    }
-                                    size="md"
-                                    color={category.color}
-                                  />
-                                  <div className="truncate">
-                                    <Text className="truncate">
-                                      <Bold className="text-gray-700">
-                                        {capitalize(
-                                          category.name || "uncategorized"
-                                        )}
-                                      </Bold>
+                : [months[0], months[1], months[2]].map((item) => {
+                    if (item) {
+                      return (
+                        <Card key={item.name} className="shadow-md">
+                          <Title>{item.name}</Title>
+                          {/* <Text>{item.name}</Text> */}
+                          <List>
+                            {item.dataList.map((category) => {
+                              if (category.showInStatCard) {
+                                return (
+                                  <ListItem key={category.name}>
+                                    <Flex
+                                      justifyContent="start"
+                                      className="truncate space-x-4"
+                                    >
+                                      <Icon
+                                        variant="light"
+                                        icon={
+                                          category.icon ||
+                                          QuestionMarkCircleIcon
+                                        }
+                                        size="md"
+                                        color={category.color}
+                                      />
+                                      <div className="truncate">
+                                        <Text className="truncate">
+                                          <Bold className="text-gray-700">
+                                            {capitalize(
+                                              category.name || "uncategorized"
+                                            )}
+                                          </Bold>
+                                        </Text>
+                                        <Text className="truncate">
+                                          {`${category.numTransactions} transactions`}
+                                        </Text>
+                                      </div>
+                                    </Flex>
+                                    <Text
+                                      className={classNames(
+                                        category.amount < 0
+                                          ? "text-green-600"
+                                          : ""
+                                      )}
+                                    >
+                                      {numeral(category.amount)
+                                        .format("$0,0.00")
+                                        .replace("-", "")}
                                     </Text>
-                                    <Text className="truncate">
-                                      {`${category.numTransactions} transactions`}
-                                    </Text>
-                                  </div>
-                                </Flex>
-                                <Text
-                                  className={classNames(
-                                    category.amount < 0 ? "text-green-600" : ""
-                                  )}
-                                >
-                                  {numeral(category.amount)
-                                    .format("$0,0.00")
-                                    .replace("-", "")}
-                                </Text>
-                              </ListItem>
-                            )
-                          }
-                        })}
-                      </List>
-                      <Button
-                        size="xs"
-                        variant="light"
-                        icon={ArrowSmallRightIcon}
-                        iconPosition="right"
-                        className="mt-4 text-gray-800 hover:text-gray-500"
-                      >
-                        Browse {item.name}
-                      </Button>
-                    </Card>
-                  ))}
+                                  </ListItem>
+                                )
+                              }
+                            })}
+                          </List>
+                          <Button
+                            size="xs"
+                            variant="light"
+                            icon={ArrowSmallRightIcon}
+                            iconPosition="right"
+                            className="mt-4 text-gray-800 hover:text-gray-500"
+                          >
+                            Browse {item.name}
+                          </Button>
+                        </Card>
+                      )
+                    }
+                  })}
             </Grid>
           </div>
         </div>
       ) : (
         <div className="mt-6">
           <Card>
-            <div className="h-96" />
+            <MultiSelectBox
+              onValueChange={(value) => setSelectedAccountIds(value)}
+              placeholder="All accounts"
+              className="max-w-xs"
+            >
+              {accounts.map((account) => (
+                <MultiSelectBoxItem
+                  key={account.id}
+                  value={account.id}
+                  text={`${account.name} (${account.lastFour})`}
+                />
+              ))}
+            </MultiSelectBox>
+            <Table className="mt-6">
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Amount
+                  </TableHeaderCell>
+                  <TableHeaderCell>Category</TableHeaderCell>
+                  <TableHeaderCell>Date</TableHeaderCell>
+                  <TableHeaderCell>Account</TableHeaderCell>
+                </TableRow>
+              </TableHead>
+
+              {loadingData ? (
+                <TableBody>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <TableRow key={i}>
+                      {[1, 2, 3, 4, 5].map((j) => (
+                        <TableCell key={j}>
+                          <div className="animate-pulse flex space-x-4">
+                            <div className="flex-1 space-y-4 py-1">
+                              <div className="h-6 bg-slate-300 rounded w-3/4"></div>
+                            </div>
+                          </div>
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              ) : (
+                <TableBody>
+                  {transactions.map((transaction) => (
+                    <TableRow
+                      key={transaction.id}
+                      className="hover:bg-slate-50 transition-all"
+                    >
+                      <TableCell>{transaction.name}</TableCell>
+                      <TableCell className="text-right">
+                        {numeral(transaction.price).format("$0,0.00")}
+                      </TableCell>
+                      <TableCell>
+                        {capitalize(transaction.category || "uncategorized")}
+                      </TableCell>
+                      <TableCell>
+                        {dayjs(transaction.date).utc().format("MM/DD/YYYY")}
+                      </TableCell>
+                      <TableCell>{transaction.Account.lastFour}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              )}
+            </Table>
           </Card>
         </div>
       )}

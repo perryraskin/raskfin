@@ -33,16 +33,30 @@ export interface StatsResponse {
 
 export interface Transaction {
   id: string
-  name: string | null
-  notes: string | null
-  status: string | null
-  type: string | null
+  name?: string
+  notes?: string
+  status?: string
+  type?: string
   price: number
-  category: string | null
+  category?: string
   date: Date
-  tellerTxnId: string | null
-  accountId: string | null
+  tellerTxnId?: string
+  accountId: string
   dateCreated: Date
   dateUpdated: Date
-  userId: string | null
+  userId?: string
+  Account: Account
+}
+
+export interface Account {
+  id: string
+  name: string
+  lastFour: string
+  institutionName?: string
+  status?: string
+  type?: string
+  subtype?: string
+  currency?: string
+  enrollmentId?: string
+  tellerAccountId?: string
 }

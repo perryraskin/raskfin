@@ -2,11 +2,14 @@ import { getAuth } from "@clerk/nextjs/server"
 import { NextApiRequest, NextApiResponse } from "next"
 import prisma from "@/lib/prismaClient"
 import dayjs from "dayjs"
-import { Prisma } from "@prisma/client"
-import { CategoryStat, CategoryStatData, Transaction } from "@/types"
+import { Transaction } from "@/types"
 
-interface GroupedData {
-  [key: string]: Transaction[]
+interface TransactionRequest {
+  includePayments?: boolean
+  dateFrom?: string
+  dateTo?: string
+  accountId?: string[]
+  category?: string[]
 }
 export default async function handler(
   req: NextApiRequest,
@@ -18,22 +21,37 @@ export default async function handler(
     return res.status(401).json({ id: null })
   }
 
-  const { date_from, date_to, account_id, category } = req.query
+  const { includePayments, dateFrom, dateTo, accountId, category } =
+    req.body as TransactionRequest
 
   const transactions = await prisma.transactions.findMany({
     where: {
       userId: userId,
-      accountId: (account_id as string) || undefined,
-      category: (category as string) || undefined,
+      type: includePayments ? undefined : { not: "payment" },
+      accountId: {
+        in:
+          (accountId && accountId.length === 0) || !accountId
+            ? undefined
+            : accountId,
+      },
+      category: {
+        in:
+          (category && category.length === 0) || !category
+            ? undefined
+            : category,
+      },
       date: {
-        gte: date_from
-          ? new Date(date_from as string)
+        gte: dateFrom
+          ? new Date(dateFrom)
           : new Date(dayjs().format("YYYY-MM-01")),
-        lte: date_to ? new Date(date_to as string) : new Date(),
+        lte: dateTo ? new Date(dateTo) : new Date(),
       },
     },
     orderBy: {
       date: "desc",
+    },
+    include: {
+      Account: true,
     },
   })
 
