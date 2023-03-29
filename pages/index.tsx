@@ -266,6 +266,10 @@ import {
   MultiSelectBoxItem,
   DateRangePicker,
   DateRangePickerValue,
+  AccordionList,
+  Accordion,
+  AccordionHeader,
+  AccordionBody,
 } from "@tremor/react"
 import {
   BriefcaseIcon,
@@ -721,7 +725,7 @@ const Home = () => {
                 onValueChange={(value) => setSelectedCategoryIds(value)}
                 value={selectedCategoryIds}
                 placeholder="All categories"
-                className="sm:max-w-xs"
+                className="sm:max-w-[10rem]"
               >
                 {categories.map((category) => (
                   <MultiSelectBoxItem
@@ -735,7 +739,7 @@ const Home = () => {
                 onValueChange={(value) => setSelectedAccountIds(value)}
                 value={selectedAccountIds}
                 placeholder="All accounts"
-                className="sm:max-w-xs"
+                className="sm:max-w-[16rem]"
               >
                 {accounts.map((account) => (
                   <MultiSelectBoxItem
@@ -760,7 +764,59 @@ const Home = () => {
                 dropdownPlaceholder="Select range"
               />
             </div>
-            <Table className="mt-6">
+
+            {/* ACCORDION LIST FOR MOBILE */}
+            <AccordionList className="mt-4 mx-auto sm:hidden">
+              {loadingData ? (
+                <div>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Accordion key={i}>
+                      <AccordionHeader>
+                        <div className="animate-pulse flex space-x-4">
+                          <div className="flex-1 space-y-4 py-1"></div>
+                        </div>
+                        <AccordionBody>
+                          <div className="animate-pulse flex space-x-4">
+                            <div className="flex-1 space-y-4 py-1">
+                              <div className="h-4 bg-slate-300 rounded w-3/4"></div>
+                              <div className="space-y-2">
+                                <div className="h-4 bg-slate-300 rounded"></div>
+                                <div className="h-4 bg-slate-300 rounded w-5/6"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </AccordionBody>
+                      </AccordionHeader>
+                    </Accordion>
+                  ))}
+                </div>
+              ) : (
+                <div>
+                  {transactions.map((transaction) => (
+                    <Accordion key={transaction.id}>
+                      <AccordionHeader className="text-sm">
+                        {transaction.name}
+                        <span className="ml-4 text-gray-500">
+                          {numeral(transaction.price).format("$0,0.00")}
+                        </span>
+                      </AccordionHeader>
+                      <AccordionBody>
+                        {numeral(transaction.price).format("$0,0.00")}
+                        <br />
+                        {capitalize(transaction.category || "uncategorized")}
+                        <br />
+                        {dayjs(transaction.date).utc().format("MM/DD/YYYY")}
+                        <br />
+                        {transaction.Account.lastFour}
+                      </AccordionBody>
+                    </Accordion>
+                  ))}
+                </div>
+              )}
+            </AccordionList>
+
+            {/* TABLE FOR DESKTOP */}
+            <Table className="mt-6 hidden sm:block">
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
@@ -796,17 +852,21 @@ const Home = () => {
                       key={transaction.id}
                       className="hover:bg-slate-50 transition-all"
                     >
-                      <TableCell>{transaction.name}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-gray-800">
+                        {transaction.name}
+                      </TableCell>
+                      <TableCell className="text-right text-gray-800">
                         {numeral(transaction.price).format("$0,0.00")}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-gray-800">
                         {capitalize(transaction.category || "uncategorized")}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-gray-800">
                         {dayjs(transaction.date).utc().format("MM/DD/YYYY")}
                       </TableCell>
-                      <TableCell>{transaction.Account.lastFour}</TableCell>
+                      <TableCell className="text-gray-800">
+                        {transaction.Account.lastFour}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
