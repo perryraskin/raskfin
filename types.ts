@@ -37,13 +37,13 @@ export interface Transaction {
   notes?: string
   status?: string
   type?: string
-  price: number
+  price: string
   category?: string
   date: Date
   tellerTxnId?: string
   accountId: string
-  dateCreated: Date
-  dateUpdated: Date
+  dateCreated?: Date
+  dateUpdated?: Date
   userId?: string
   Account: Account
 }

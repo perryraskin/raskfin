@@ -4,7 +4,7 @@ import prisma from "@/lib/prismaClient"
 import dayjs from "dayjs"
 import { Transaction } from "@/types"
 
-interface TransactionRequest {
+interface TransactionsRequest {
   includePayments?: boolean
   dateFrom?: string
   dateTo?: string
@@ -21,39 +21,49 @@ export default async function handler(
     return res.status(401).json({ id: null })
   }
 
-  const { includePayments, dateFrom, dateTo, accountId, category } =
-    req.body as TransactionRequest
+  switch (req.method) {
+    case "POST":
+      const { includePayments, dateFrom, dateTo, accountId, category } =
+        req.body as TransactionsRequest
 
-  const transactions = await prisma.transactions.findMany({
-    where: {
-      userId: userId,
-      type: includePayments ? undefined : { not: "payment" },
-      accountId: {
-        in:
-          (accountId && accountId.length === 0) || !accountId
-            ? undefined
-            : accountId,
-      },
-      category: {
-        in:
-          (category && category.length === 0) || !category
-            ? undefined
-            : category,
-      },
-      date: {
-        gte: dateFrom
-          ? new Date(dateFrom)
-          : new Date(dayjs().format("YYYY-MM-01")),
-        lte: dateTo ? new Date(dateTo) : new Date(),
-      },
-    },
-    orderBy: {
-      date: "desc",
-    },
-    include: {
-      Account: true,
-    },
-  })
+      const transactions = await prisma.transactions.findMany({
+        where: {
+          userId: userId,
+          type: includePayments ? undefined : { not: "payment" },
+          accountId: {
+            in:
+              (accountId && accountId.length === 0) || !accountId
+                ? undefined
+                : accountId,
+          },
+          category: {
+            in:
+              (category && category.length === 0) || !category
+                ? undefined
+                : category,
+          },
+          date: {
+            gte: dateFrom
+              ? new Date(dateFrom)
+              : new Date(dayjs().format("YYYY-MM-01")),
+            lte: dateTo ? new Date(dateTo) : new Date(),
+          },
+        },
+        orderBy: [
+          {
+            date: "desc",
+          },
+          {
+            dateCreated: "desc",
+          },
+        ],
+        include: {
+          Account: true,
+        },
+      })
 
-  res.status(200).json(transactions)
+      return res.status(200).json(transactions)
+    default:
+      return res.status(405).json({ message: "Method not allowed" })
+  }
 }

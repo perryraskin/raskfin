@@ -301,6 +301,7 @@ import {
 } from "@/types"
 import { categoryIconDict } from "@/constants/category-icons"
 import { capitalize, classNames, valueFormatter } from "@/helpers"
+import TransactionDialog from "@/components/TransactionDialog"
 
 const Home = () => {
   const { user } = useUser()
@@ -438,6 +439,21 @@ const Home = () => {
     selectedAccountIds,
   ])
 
+  const [openTransactionDialog, setOpenTransactionDialog] =
+    React.useState(false)
+  const [selectedTransaction, setSelectedTransaction] =
+    React.useState<Transaction>({
+      id: "",
+      price: "0",
+      date: new Date(),
+      accountId: "",
+      Account: {
+        id: "",
+        name: "",
+        lastFour: "",
+      },
+    })
+
   if (!user) return <></>
   return (
     <main className="max-w-7xl mx-auto mt-10 px-4 xl:px-0 bg-slate-100">
@@ -455,6 +471,21 @@ const Home = () => {
         />
         <Tab value="2" text="Data" className="text-gray-800 border-gray-800" />
       </TabList>
+
+      <TransactionDialog
+        open={openTransactionDialog}
+        setOpen={setOpenTransactionDialog}
+        categories={categories}
+        selectedTransaction={selectedTransaction}
+        refreshData={() =>
+          getTransactions(
+            selectedDateFrom,
+            selectedDateTo,
+            selectedCategoryIds,
+            selectedAccountIds
+          )
+        }
+      />
 
       {selectedView === "1" ? (
         <div className="mt-4 pb-20 bg-slate-100">
@@ -794,7 +825,7 @@ const Home = () => {
                 <div>
                   {transactions.map((transaction) => (
                     <Accordion key={transaction.id}>
-                      <AccordionHeader className="text-sm">
+                      <AccordionHeader className="text-xs text-left">
                         {transaction.name}
                         <span className="ml-4 text-gray-500">
                           {numeral(transaction.price).format("$0,0.00")}
@@ -808,6 +839,16 @@ const Home = () => {
                         {dayjs(transaction.date).utc().format("MM/DD/YYYY")}
                         <br />
                         {transaction.Account.lastFour}
+                        <br />
+                        <button
+                          onClick={() => {
+                            setSelectedTransaction(transaction)
+                            setOpenTransactionDialog(true)
+                          }}
+                          className="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                          Edit
+                        </button>
                       </AccordionBody>
                     </Accordion>
                   ))}
@@ -850,13 +891,31 @@ const Home = () => {
                   {transactions.map((transaction) => (
                     <TableRow
                       key={transaction.id}
-                      className="hover:bg-slate-50 transition-all"
+                      className={classNames(
+                        "transition-all cursor-pointer",
+                        parseFloat(transaction.price) < 0
+                          ? "hover:bg-green-50"
+                          : "hover:bg-slate-50"
+                      )}
+                      onClick={() => {
+                        setSelectedTransaction(transaction)
+                        setOpenTransactionDialog(true)
+                      }}
                     >
                       <TableCell className="text-gray-800">
                         {transaction.name}
                       </TableCell>
-                      <TableCell className="text-right text-gray-800">
-                        {numeral(transaction.price).format("$0,0.00")}
+                      <TableCell
+                        className={classNames(
+                          "text-right",
+                          parseFloat(transaction.price) < 0
+                            ? "text-green-600 font-medium"
+                            : "text-gray-800"
+                        )}
+                      >
+                        {numeral(transaction.price)
+                          .format("$0,0.00")
+                          .replace("-", "")}
                       </TableCell>
                       <TableCell className="text-gray-800">
                         {capitalize(transaction.category || "uncategorized")}
