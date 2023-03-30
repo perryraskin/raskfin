@@ -135,28 +135,23 @@ export default function TransactionDialog({
                           </div>
 
                           <div className="col-span-full">
-                            <label
-                              htmlFor="name"
-                              className="text-left block text-sm font-medium leading-6 text-gray-900"
-                            >
+                            <label className="text-left block text-sm font-medium leading-6 text-gray-900">
                               Name
                             </label>
                             <div className="mt-2">
-                              <input
-                                id="name"
-                                type="text"
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 pl-2 focus:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-gray-800 sm:text-sm sm:leading-6"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                              />
+                              <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-gray-800 sm:max-w-md">
+                                <input
+                                  type="text"
+                                  className="pl-2 focus:outline-none block flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                                  value={name}
+                                  onChange={(e) => setName(e.target.value)}
+                                />
+                              </div>
                             </div>
                           </div>
 
                           <div className="sm:col-span-3">
-                            <label
-                              htmlFor="first-name"
-                              className="text-left block text-sm font-medium leading-6 text-gray-900"
-                            >
+                            <label className="text-left block text-sm font-medium leading-6 text-gray-900">
                               Amount
                             </label>
                             <div className="mt-2">
@@ -182,20 +177,18 @@ export default function TransactionDialog({
                           </div>
 
                           <div className="sm:col-span-3">
-                            <label
-                              htmlFor="date"
-                              className="text-left block text-sm font-medium leading-6 text-gray-900"
-                            >
+                            <label className="text-left block text-sm font-medium leading-6 text-gray-900">
                               Date
                             </label>
                             <div className="mt-2">
-                              <input
-                                type="date"
-                                id="date"
-                                className="block w-full rounded-md border-0 py-1 h-9 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 pl-2 focus:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-gray-800 sm:text-sm sm:leading-6"
-                                value={date}
-                                onChange={(e) => setDate(e.target.value)}
-                              />
+                              <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-gray-800 sm:max-w-md">
+                                <input
+                                  type="date"
+                                  className="pl-2 focus:outline-none block flex-1 border-0 bg-transparent py-1 h-9 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                                  value={date}
+                                  onChange={(e) => setDate(e.target.value)}
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
