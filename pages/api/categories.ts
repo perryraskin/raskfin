@@ -16,6 +16,9 @@ export default async function handler(
     by: ["category"],
     where: {
       userId: userId,
+      category: {
+        not: null,
+      },
     },
     orderBy: {
       category: "asc",
