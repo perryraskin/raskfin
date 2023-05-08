@@ -409,10 +409,16 @@ const Home = () => {
       await getTransactions()
     }
     if (user) {
+      console.log("user:", user)
       init()
     }
   }, [user])
 
+  const [dateRangeValue, setDateRangeValue] =
+    React.useState<DateRangePickerValue>([
+      dayjs().startOf("month").toDate(),
+      dayjs().toDate(),
+    ])
   const [selectedDateFrom, setSelectedDateFrom] = React.useState<string>(
     dayjs().startOf("month").format("YYYY-MM-DD")
   )
@@ -426,18 +432,31 @@ const Home = () => {
     []
   )
   React.useEffect(() => {
-    getTransactions(
-      selectedDateFrom,
-      selectedDateTo,
-      selectedCategoryIds,
-      selectedAccountIds
-    )
+    if (user) {
+      getTransactions(
+        selectedDateFrom,
+        selectedDateTo,
+        selectedCategoryIds,
+        selectedAccountIds
+      )
+    }
   }, [
+    user,
     selectedDateFrom,
     selectedDateTo,
     selectedCategoryIds,
     selectedAccountIds,
   ])
+
+  React.useEffect(() => {
+    console.log(dateRangeValue)
+    setSelectedDateFrom(dayjs(dateRangeValue[0]).format("YYYY-MM-DD"))
+    setSelectedDateTo(
+      dateRangeValue[1]
+        ? dayjs(dateRangeValue[1]).format("YYYY-MM-DD")
+        : dayjs(dateRangeValue[0]).format("YYYY-MM-DD")
+    )
+  }, [dateRangeValue])
 
   const [openTransactionDialog, setOpenTransactionDialog] =
     React.useState(false)
@@ -782,16 +801,8 @@ const Home = () => {
               </MultiSelectBox>
               <DateRangePicker
                 className="sm:max-w-md mx-auto"
-                value={[
-                  dayjs(selectedDateFrom).utc().toDate(),
-                  dayjs(selectedDateTo).utc().toDate(),
-                ]}
-                onValueChange={(value: DateRangePickerValue) => {
-                  if (value && value[0] && value[1]) {
-                    setSelectedDateFrom(dayjs(value[0]).format("YYYY-MM-DD"))
-                    setSelectedDateTo(dayjs(value[1]).format("YYYY-MM-DD"))
-                  }
-                }}
+                value={dateRangeValue}
+                onValueChange={setDateRangeValue}
                 dropdownPlaceholder="Select range"
               />
             </div>
