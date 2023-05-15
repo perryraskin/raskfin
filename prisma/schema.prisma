@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
   // directUrl = env("DIRECT_URL")
 }
 
@@ -39,4 +39,16 @@ model accounts {
   tellerAccountId String?        @unique @map("teller_account_id")
   userId          String?        @map("user_id")
   Transactions    transactions[]
+}
+
+model rules {
+  id           String   @id @default(uuid())
+  dateCreated  DateTime @default(now()) @map("date_created")
+  dateUpdated  DateTime @default(now()) @updatedAt @map("date_updated")
+  name         String?
+  matchType    String?  @map("match_type")
+  fieldToCheck String?  @map("field_to_check")
+  keywords     String?
+  fieldToSet   String?  @map("field_to_set")
+  valueToSet   String?  @map("value_to_set")
 }
