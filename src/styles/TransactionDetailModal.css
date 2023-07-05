@@ -1,0 +1,41 @@
+.transaction-detail-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.transaction-detail-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.transaction-detail-modal-header {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+}
+
+.transaction-detail-modal-body {
+    padding: 2px 16px;
+}
+
+.transaction-detail-modal-footer {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+}
+
+@media screen and (max-width: 600px) {
+    .transaction-detail-modal-content {
+        width: 90%;
+    }
+}

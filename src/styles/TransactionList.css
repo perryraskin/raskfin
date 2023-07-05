@@ -1,0 +1,29 @@
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+.transaction-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.transaction-list-item:hover {
+    background-color: #e0e0e0;
+}
+
+@media (max-width: 600px) {
+    .transaction-list {
+        width: 100%;
+    }
+}

@@ -1,0 +1,36 @@
+.transaction-edit-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.transaction-edit-form input,
+.transaction-edit-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.transaction-edit-form button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.transaction-edit-form button:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+    .transaction-edit-form {
+        width: 100%;
+    }
+}
