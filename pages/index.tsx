@@ -335,26 +335,28 @@ const Home = () => {
   }
 
   async function getTransactions(
-    dateFrom: string | undefined = dayjs()
-      .startOf("month")
-      .format("YYYY-MM-DD"),
-    dateTo: string | undefined = dayjs().format("YYYY-MM-DD"),
-    category: string[] | undefined = undefined,
-    accountId: string[] | undefined = undefined
-  ) {
-    setLoadingData(true)
-    const res = await fetch("/api/transactions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        dateFrom,
-        dateTo,
-        category,
-        accountId,
-      }),
-    })
+      dateFrom: string | undefined = dayjs()
+        .startOf("month")
+        .format("YYYY-MM-DD"),
+      dateTo: string | undefined = dayjs().format("YYYY-MM-DD"),
+      category: string[] | undefined = undefined,
+      accountId: string[] | undefined = undefined,
+      groupByName: boolean = true
+    ) {
+      setLoadingData(true)
+      const res = await fetch("/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          dateFrom,
+          dateTo,
+          category,
+          accountId,
+          groupByName,
+        }),
+      })
     const data = await res.json()
     console.log(data)
     setTransactions(data)
@@ -873,7 +875,10 @@ const Home = () => {
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
                   <TableHeaderCell className="text-right">
-                    Amount
+                    Total Amount
+                  </TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Number of Transactions
                   </TableHeaderCell>
                   <TableHeaderCell>Category</TableHeaderCell>
                   <TableHeaderCell>Date</TableHeaderCell>
@@ -904,7 +909,7 @@ const Home = () => {
                       key={transaction.id}
                       className={classNames(
                         "transition-all cursor-pointer",
-                        parseFloat(transaction.price) < 0
+                        parseFloat(transaction.totalAmount) < 0
                           ? "hover:bg-green-50"
                           : "hover:bg-slate-50"
                       )}
@@ -919,14 +924,17 @@ const Home = () => {
                       <TableCell
                         className={classNames(
                           "text-right",
-                          parseFloat(transaction.price) < 0
+                          parseFloat(transaction.totalAmount) < 0
                             ? "text-green-600 font-medium"
                             : "text-gray-800"
                         )}
                       >
-                        {numeral(transaction.price)
+                        {numeral(transaction.totalAmount)
                           .format("$0,0.00")
                           .replace("-", "")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {transaction.numTransactions}
                       </TableCell>
                       <TableCell className="text-gray-800">
                         {capitalize(transaction.category || "uncategorized")}
