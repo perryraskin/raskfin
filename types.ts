@@ -38,8 +38,6 @@ export interface Transaction {
   status?: string
   type?: string
   price: string
-  totalAmount: string
-  numTransactions: number
   category?: string
   date: Date
   tellerTxnId?: string
