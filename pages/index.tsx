@@ -204,51 +204,6 @@ const Home = () => {
     []
   )
   React.useEffect(() => {
-    async function getMerchantName(transaction: string): Promise<any> {
-      const apiKey = "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"
-      const prompt = `Given the transaction: "${transaction}", provide the merchant name.`
-      const apiUrl = "https://api.openai.com/v1/chat/completions"
-      const maxTokens = 15 // You can adjust the value based on your desired response length
-
-      try {
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "gpt-3.5-turbo",
-            messages: [
-              {
-                role: "system",
-                content:
-                  "You are a helpful assistant. You only return one word string: the name of the merchant that was asked for by the user. Use your judgment and knowledge to capitalize the merchant name appropriately.",
-              },
-              { role: "user", content: prompt },
-            ],
-          }),
-        })
-
-        const data = await response.json()
-        console.log(data)
-        return data
-      } catch (error) {
-        console.error("Error:", error)
-        return null
-      }
-    }
-
-    // Usage
-    const transaction = "STARBUCKS 800-782-7282 800-782-7282"
-    getMerchantName(transaction)
-      .then((data) => {
-        console.log("Merchant Name:", data.choices[0].message.content)
-      })
-      .catch((error) => {
-        console.error("Error:", error)
-      })
-
     if (user) {
       getTransactions(
         selectedDateFrom,
