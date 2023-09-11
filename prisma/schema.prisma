@@ -9,20 +9,28 @@ datasource db {
 }
 
 model transactions {
-  id          String    @id @default(uuid())
+  id          String     @id @default(uuid())
   name        String
   notes       String?
   status      String?
   type        String?
-  price       Decimal   @default(0) @db.Decimal(10, 2)
+  price       Decimal    @default(0) @db.Decimal(10, 2)
   category    String?
   date        DateTime?
-  tellerTxnId String?   @unique @map("teller_txn_id")
-  Account     accounts? @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  accountId   String?   @map("account_id")
-  dateCreated DateTime  @default(now()) @map("date_created")
-  dateUpdated DateTime  @default(now()) @updatedAt @map("date_updated")
-  userId      String?   @map("user_id")
+  tellerTxnId String?    @unique @map("teller_txn_id")
+  Account     accounts?  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  accountId   String?    @map("account_id")
+  dateCreated DateTime   @default(now()) @map("date_created")
+  dateUpdated DateTime   @default(now()) @updatedAt @map("date_updated")
+  userId      String?    @map("user_id")
+  merchantId  String?    @map("merchant_id")
+  Merchant    merchants? @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
+
+model merchants {
+  id           String         @id @default(uuid())
+  name         String         @unique
+  Transactions transactions[]
 }
 
 model accounts {

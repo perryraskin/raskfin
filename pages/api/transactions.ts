@@ -2,9 +2,8 @@ import { getAuth } from "@clerk/nextjs/server"
 import { NextApiRequest, NextApiResponse } from "next"
 import prisma from "@/lib/prismaClient"
 import dayjs from "dayjs"
-import { Transaction } from "@/types"
 
-interface TransactionsRequest {
+interface ITransactionsRequest {
   includePayments?: boolean
   dateFrom?: string
   dateTo?: string
@@ -24,7 +23,7 @@ export default async function handler(
   switch (req.method) {
     case "POST":
       const { includePayments, dateFrom, dateTo, accountId, category } =
-        req.body as TransactionsRequest
+        req.body as ITransactionsRequest
 
       const transactions = await prisma.transactions.findMany({
         where: {
