@@ -63,6 +63,26 @@ export default async function handler(
           date: date ? new Date(date) : undefined,
         },
       })
+
+      const existingRuleByTransactionName = await prisma.rules.findFirst({
+        where: {
+          keywords: name?.toLowerCase(),
+          matchType: "exact",
+        },
+      })
+
+      if (!existingRuleByTransactionName) {
+        await prisma.rules.create({
+          data: {
+            name,
+            keywords: name?.toLowerCase(),
+            matchType: "exact",
+            fieldToCheck: "name",
+            fieldToSet: "category",
+            valueToSet: category,
+          },
+        })
+      }
       return res.status(200).json(updatedTransaction)
     default:
       return res.status(405).json({ message: "Method not allowed" })

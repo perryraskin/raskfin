@@ -13,6 +13,11 @@ import {
   TvIcon,
   CubeTransparentIcon,
   GiftIcon,
+  UserIcon,
+  HandRaisedIcon,
+  ReceiptPercentIcon,
+  HeartIcon,
+  ScissorsIcon,
 } from "@heroicons/react/24/solid"
 import { Color } from "@tremor/react"
 
@@ -59,6 +64,10 @@ export const categoryIconDict: CategoryIconDict = {
     color: "rose",
   },
   dining: {
+    icon: ReceiptPercentIcon,
+    color: "lime",
+  },
+  home: {
     icon: HomeIcon,
     color: "amber",
   },
@@ -67,7 +76,7 @@ export const categoryIconDict: CategoryIconDict = {
     color: "emerald",
   },
   health: {
-    icon: ShieldExclamationIcon,
+    icon: HeartIcon,
     color: "red",
   },
   software: {
@@ -81,5 +90,9 @@ export const categoryIconDict: CategoryIconDict = {
   donations: {
     icon: GiftIcon,
     color: "green",
+  },
+  personal: {
+    icon: ScissorsIcon,
+    color: "yellow",
   },
 }

@@ -808,7 +808,7 @@ const Home = () => {
             </div>
 
             {/* ACCORDION LIST FOR MOBILE */}
-            <AccordionList className="mt-4 mx-auto sm:hidden">
+            {/* <AccordionList className="mt-4 mx-auto sm:hidden">
               {loadingData ? (
                 <div>
                   {[1, 2, 3, 4, 5].map((i) => (
@@ -865,10 +865,10 @@ const Home = () => {
                   ))}
                 </div>
               )}
-            </AccordionList>
+            </AccordionList> */}
 
             {/* TABLE FOR DESKTOP */}
-            <Table className="mt-6 hidden sm:block">
+            <Table className="mt-6">
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
@@ -913,7 +913,7 @@ const Home = () => {
                         setOpenTransactionDialog(true)
                       }}
                     >
-                      <TableCell className="text-gray-800">
+                      <TableCell className="text-gray-800 max-w-[10rem] sm:max-w-none truncate sm:whitespace-normal">
                         {transaction.name}
                       </TableCell>
                       <TableCell
