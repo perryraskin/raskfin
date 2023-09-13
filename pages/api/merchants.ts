@@ -44,7 +44,7 @@ export default async function handler(
       const merchants = await prisma.$queryRaw`
         SELECT
           m.name AS merchant,
-          SUM(t.price) AS total_spent
+          SUM(t.price) AS "totalSpent"
         FROM
           merchants m
         JOIN
@@ -58,7 +58,7 @@ export default async function handler(
         GROUP BY
           m.name
         ORDER BY
-          total_spent DESC;
+          "totalSpent" DESC;
       `
 
       return res.status(200).json(merchants)

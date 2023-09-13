@@ -48,6 +48,11 @@ export interface Transaction {
   Account: Account
 }
 
+export interface MerchantSpendTotal {
+  merchant: string
+  totalSpent: number
+}
+
 export interface Account {
   id: string
   name: string

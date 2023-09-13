@@ -67,6 +67,7 @@ import {
   Account,
   CategoryStat,
   CategoryStatData,
+  MerchantSpendTotal,
   StatsResponse,
   Transaction,
 } from "@/types"
@@ -93,6 +94,9 @@ const Home = () => {
   const [accounts, setAccounts] = React.useState<Account[]>([])
   const [categories, setCategories] = React.useState<string[]>([])
   const [transactions, setTransactions] = React.useState<Transaction[]>([])
+  const [merchantSpendTotals, setMerchantSpendTotals] = React.useState<
+    MerchantSpendTotal[]
+  >([])
 
   async function getAccounts() {
     const res = await fetch("/api/accounts")
@@ -130,6 +134,29 @@ const Home = () => {
     const data = await res.json()
     console.log(data)
     setTransactions(data)
+    setLoadingData(false)
+  }
+
+  async function getMerchantSpendTotals(
+    dateFrom: string | undefined = dayjs()
+      .startOf("month")
+      .format("YYYY-MM-DD"),
+    dateTo: string | undefined = dayjs().format("YYYY-MM-DD")
+  ) {
+    setLoadingData(true)
+    const res = await fetch("/api/merchants", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        dateFrom,
+        dateTo,
+      }),
+    })
+    const data = await res.json()
+    console.log("merchants:", data)
+    setMerchantSpendTotals(data)
     setLoadingData(false)
   }
 
@@ -179,6 +206,7 @@ const Home = () => {
       await getCategories()
       await getMonths()
       await getTransactions()
+      await getMerchantSpendTotals()
     }
     if (user) {
       console.log("user:", user)
@@ -211,6 +239,7 @@ const Home = () => {
         selectedCategoryIds,
         selectedAccountIds
       )
+      getMerchantSpendTotals(selectedDateFrom, selectedDateTo)
     }
   }, [
     user,
@@ -548,7 +577,7 @@ const Home = () => {
             </Grid>
           </div>
         </div>
-      ) : (
+      ) : selectedView === "Transactions" ? (
         <div className="mt-6">
           <Card>
             <div className="sm:flex space-y-2 sm:space-y-0 sm:space-x-2 space-x-0 justify-end">
@@ -718,6 +747,123 @@ const Home = () => {
                       <TableCell className="text-gray-800">
                         {transaction.Account.lastFour}
                       </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              )}
+            </Table>
+          </Card>
+        </div>
+      ) : (
+        <div className="mt-6">
+          <Card>
+            <div className="sm:flex space-y-2 sm:space-y-0 sm:space-x-2 space-x-0 justify-end">
+              {/* <MultiSelectBox
+                onValueChange={(value) => setSelectedCategoryIds(value)}
+                value={selectedCategoryIds}
+                placeholder="All categories"
+                className="sm:max-w-[10rem]"
+              >
+                {categories.map((category) => (
+                  <MultiSelectBoxItem
+                    key={category}
+                    value={category}
+                    text={capitalize(category || "uncategorized")}
+                  />
+                ))}
+              </MultiSelectBox>
+              <MultiSelectBox
+                onValueChange={(value) => setSelectedAccountIds(value)}
+                value={selectedAccountIds}
+                placeholder="All accounts"
+                className="sm:max-w-[16rem]"
+              >
+                {accounts.map((account) => (
+                  <MultiSelectBoxItem
+                    key={account.id}
+                    value={account.id}
+                    text={`${account.name} (${account.lastFour})`}
+                  />
+                ))}
+              </MultiSelectBox> */}
+              <DateRangePicker
+                className="sm:max-w-md ml-auto"
+                value={dateRangeValue}
+                onValueChange={setDateRangeValue}
+                dropdownPlaceholder="Select range"
+              />
+            </div>
+
+            {/* TABLE FOR DESKTOP */}
+            <Table className="mt-6 max-w-md">
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>Merchant</TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Total
+                  </TableHeaderCell>
+                  {/* <TableHeaderCell>Category</TableHeaderCell>
+                  <TableHeaderCell>Date</TableHeaderCell>
+                  <TableHeaderCell>Account</TableHeaderCell> */}
+                </TableRow>
+              </TableHead>
+
+              {loadingData ? (
+                <TableBody>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <TableRow key={i}>
+                      {[1, 2, 3, 4, 5].map((j) => (
+                        <TableCell key={j}>
+                          <div className="animate-pulse flex space-x-4">
+                            <div className="flex-1 space-y-4 py-1">
+                              <div className="h-6 bg-slate-300 rounded w-3/4"></div>
+                            </div>
+                          </div>
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              ) : (
+                <TableBody>
+                  {merchantSpendTotals.map((record) => (
+                    <TableRow
+                      key={record.merchant}
+                      className={classNames(
+                        "transition-all cursor-pointer",
+                        record.totalSpent < 0
+                          ? "hover:bg-green-50"
+                          : "hover:bg-slate-50"
+                      )}
+                      // onClick={() => {
+                      //   setSelectedTransaction(transaction)
+                      //   setOpenTransactionDialog(true)
+                      // }}
+                    >
+                      <TableCell className="text-gray-800 max-w-[10rem] sm:max-w-none truncate sm:whitespace-normal">
+                        {record.merchant}
+                      </TableCell>
+                      <TableCell
+                        className={classNames(
+                          "text-right",
+                          record.totalSpent < 0
+                            ? "text-green-600 font-medium"
+                            : "text-gray-800"
+                        )}
+                      >
+                        {numeral(record.totalSpent)
+                          .format("$0,0.00")
+                          .replace("-", "")}
+                      </TableCell>
+                      {/* <TableCell className="text-gray-800">
+                        {capitalize(transaction.category || "uncategorized")}
+                      </TableCell>
+                      <TableCell className="text-gray-800">
+                        {dayjs(transaction.date).utc().format("MM/DD/YYYY")}
+                      </TableCell>
+                      <TableCell className="text-gray-800">
+                        {transaction.Account.lastFour}
+                      </TableCell> */}
                     </TableRow>
                   ))}
                 </TableBody>
