@@ -24,7 +24,10 @@ import { Color } from "@tremor/react"
 interface CategoryIconDict {
   [key: string]: {
     icon: React.ForwardRefExoticComponent<
-      React.SVGProps<SVGSVGElement> & { title?: string; titleId?: string }
+      React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> & {
+        title?: string
+        titleId?: string
+      } & React.RefAttributes<SVGSVGElement>
     >
     color: Color
   }

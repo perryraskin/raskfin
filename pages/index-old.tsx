@@ -59,85 +59,89 @@
 // };
 // `.trim()
 
-// // Main component using <SignedIn> and <SignedOut>.
-// //
-// // The SignedIn and SignedOut components are used to control rendering
-// // depending on whether or not a visitor is signed in.
-// //
-// // https://clerk.dev/docs/component-reference/signed-in
-// const Main = () => (
-//   <main className={styles.main}>
-//     <h1 className={styles.title}>Welcome to your new app</h1>
-//     <SignedIn>
-//       <p className={styles.description}>You have successfully signed in</p>
-//     </SignedIn>
-//     <SignedOut>
-//       <p className={styles.description}>
-//         Sign up for an account to get started
-//       </p>
-//     </SignedOut>
+// Main component using <SignedIn> and <SignedOut>.
+//
+// The SignedIn and SignedOut components are used to control rendering
+// depending on whether or not a visitor is signed in.
+//
+// https://clerk.dev/docs/component-reference/signed-in
+const Main = () => (
+  <main
+  // className={styles.main}
+  >
+    {/* <h1 className={styles.title}>Welcome to your new app</h1>
+    <SignedIn>
+      <p className={styles.description}>You have successfully signed in</p>
+    </SignedIn>
+    <SignedOut>
+      <p className={styles.description}>
+        Sign up for an account to get started
+      </p>
+    </SignedOut>
 
-//     <div className={styles.cards}>
-//       <SignedIn>
-//         <div className={styles.card}>
-//           <SSRDemoLink />
-//         </div>
-//         <div className={styles.card}>
-//           <ClerkFeatures />
-//         </div>
-//       </SignedIn>
-//       <SignedOut>
-//         <div className={styles.card}>
-//           <SignupLink />
-//         </div>
-//       </SignedOut>
+    <div className={styles.cards}>
+      <SignedIn>
+        <div className={styles.card}>
+          <SSRDemoLink />
+        </div>
+        <div className={styles.card}>
+          <ClerkFeatures />
+        </div>
+      </SignedIn>
+      <SignedOut>
+        <div className={styles.card}>
+          <SignupLink />
+        </div>
+      </SignedOut>
 
-//       <div className={styles.card}>
-//         <Link
-//           target="_blank"
-//           rel="noopener"
-//           className={styles.cardContent}
-//           href="https://dashboard.clerk.dev/last-active?utm_source=github&utm_medium=starter_repos&utm_campaign=nextjs_starter"
-//         >
-//           <img src="/icons/settings.svg" />
-//           <div>
-//             <h3>Configure settings for your app</h3>
-//             <p>
-//               Visit Clerk to manage instances and configure settings for user
-//               management, theme, and more
-//             </p>
-//           </div>
-//           <div className={styles.arrow}>
-//             <img src="/icons/arrow-right.svg" />
-//           </div>
-//         </Link>
-//       </div>
-//     </div>
+      <div className={styles.card}>
+        <Link
+          target="_blank"
+          rel="noopener"
+          className={styles.cardContent}
+          href="https://dashboard.clerk.dev/last-active?utm_source=github&utm_medium=starter_repos&utm_campaign=nextjs_starter"
+        >
+          <img src="/icons/settings.svg" />
+          <div>
+            <h3>Configure settings for your app</h3>
+            <p>
+              Visit Clerk to manage instances and configure settings for user
+              management, theme, and more
+            </p>
+          </div>
+          <div className={styles.arrow}>
+            <img src="/icons/arrow-right.svg" />
+          </div>
+        </Link>
+      </div>
+    </div>
 
-//     <SignedIn>
-//       <APIRequest />
-//     </SignedIn>
+    <SignedIn>
+      <APIRequest />
+    </SignedIn>
 
-//     <div className={styles.links}>
-//       <Link
-//         target="_blank"
-//         rel="noopener"
-//         className={styles.link}
-//         href="https://clerk.dev/docs?utm_source=github&utm_medium=starter_repos&utm_campaign=nextjs_starter"
-//       >
-//         <span className={styles.linkText}>Read Clerk documentation</span>
-//       </Link>
-//       <Link
-//         target="_blank"
-//         rel="noopener"
-//         className={styles.link}
-//         href="https://nextjs.org/docs"
-//       >
-//         <span className={styles.linkText}>Read NextJS documentation</span>
-//       </Link>
-//     </div>
-//   </main>
-// )
+    <div className={styles.links}>
+      <Link
+        target="_blank"
+        rel="noopener"
+        className={styles.link}
+        href="https://clerk.dev/docs?utm_source=github&utm_medium=starter_repos&utm_campaign=nextjs_starter"
+      >
+        <span className={styles.linkText}>Read Clerk documentation</span>
+      </Link>
+      <Link
+        target="_blank"
+        rel="noopener"
+        className={styles.link}
+        href="https://nextjs.org/docs"
+      >
+        <span className={styles.linkText}>Read NextJS documentation</span>
+      </Link>
+    </div> */}
+  </main>
+)
+
+export default Main
 
 // const APIRequest = () => {
 //   React.useEffect(() => {
