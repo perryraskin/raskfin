@@ -511,7 +511,16 @@ const Home = () => {
                 : [months[0], months[1], months[2]].map((item) => {
                     if (item) {
                       return (
-                        <Card key={item.name} className="shadow-md">
+                        <Card
+                          key={item.name}
+                          className={classNames(
+                            "shadow-md",
+                            item === months[2]
+                              ? "order-first sm:order-none"
+                              : "",
+                            item === months[0] ? "order-last sm:order-none" : ""
+                          )}
+                        >
                           <Title>{item.name}</Title>
                           {/* <Text>{item.name}</Text> */}
                           <List>
@@ -755,7 +764,7 @@ const Home = () => {
           </Card>
         </div>
       ) : (
-        <div className="mt-6">
+        <div className="mt-6 max-w-lg">
           <Card>
             <div className="sm:flex space-y-2 sm:space-y-0 sm:space-x-2 space-x-0 justify-end">
               {/* <MultiSelectBox
@@ -795,7 +804,7 @@ const Home = () => {
             </div>
 
             {/* TABLE FOR DESKTOP */}
-            <Table className="mt-6 max-w-md">
+            <Table className="mt-6">
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Merchant</TableHeaderCell>
