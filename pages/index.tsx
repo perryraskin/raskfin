@@ -276,13 +276,15 @@ const Home = () => {
 
   if (!user) return <></>
   return (
-    <main className="max-w-7xl mx-auto mt-10 px-4 xl:px-0 bg-slate-100">
-      <Title>Dashboard</Title>
-      <Text>Lorem ipsum dolor sit amet, consetetur sadipscing elitr.</Text>
+    <main className="max-w-7xl mx-auto mt-10 xl:px-0 bg-slate-100">
+      <Title className="px-4 sm:px-0">Dashboard</Title>
+      <Text className="px-4 sm:px-0">
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
+      </Text>
       <TabList
         defaultValue="Summary"
         onValueChange={(value) => setSelectedView(value)}
-        className="mt-6"
+        className="mt-6 px-4 sm:px-0"
       >
         <Tab
           value="Summary"
@@ -319,7 +321,7 @@ const Home = () => {
       {selectedView === "Summary" ? (
         <div className="mt-4 pb-20 bg-slate-100">
           {loadingSummary ? (
-            <Card>
+            <Card className="rounded-none sm:rounded-lg">
               <div className="animate-pulse flex space-x-4">
                 <div className="flex-1 space-y-4 py-1">
                   <div className="h-12 bg-slate-300 rounded w-3/4"></div>
@@ -331,7 +333,7 @@ const Home = () => {
               </div>
             </Card>
           ) : (
-            <Card className="shadow-md">
+            <Card className="shadow-md rounded-none sm:rounded-lg">
               <div className="hidden sm:block">
                 <Flex
                   className="space-x-4"
@@ -339,7 +341,7 @@ const Home = () => {
                   alignItems="center"
                 >
                   <Title className="truncate">
-                    Spendings by Category - {currentMonth?.name}
+                    Spendings by Category - {currentMonth?.name}cioin
                   </Title>
                   <Dropdown
                     onValueChange={(value) =>
@@ -467,7 +469,7 @@ const Home = () => {
                         <Card
                           key={item.name}
                           className={classNames(
-                            "shadow-md",
+                            "shadow-md rounded-none sm:rounded-lg",
                             item === months[2]
                               ? "order-first sm:order-none"
                               : "",
@@ -541,7 +543,7 @@ const Home = () => {
         </div>
       ) : selectedView === "Transactions" ? (
         <div className="mt-6">
-          <Card>
+          <Card className="rounded-none sm:rounded-lg">
             <div className="sm:flex space-y-2 sm:space-y-0 sm:space-x-2 space-x-0 justify-end">
               <MultiSelectBox
                 onValueChange={(value) => setSelectedCategoryIds(value)}
@@ -706,7 +708,7 @@ const Home = () => {
         </div>
       ) : (
         <div className="mt-6 max-w-lg">
-          <Card>
+          <Card className="rounded-none sm:rounded-lg">
             <div className="sm:flex space-y-2 sm:space-y-0 sm:space-x-2 space-x-0 justify-end">
               {/* <MultiSelectBox
                 onValueChange={(value) => setSelectedCategoryIds(value)}
