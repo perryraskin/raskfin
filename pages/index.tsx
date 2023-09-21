@@ -233,13 +233,13 @@ const Home = () => {
   )
   React.useEffect(() => {
     if (user) {
-      // getTransactions(
-      //   selectedDateFrom,
-      //   selectedDateTo,
-      //   selectedCategoryIds,
-      //   selectedAccountIds
-      // )
-      // getMerchantSpendTotals(selectedDateFrom, selectedDateTo)
+      getTransactions(
+        selectedDateFrom,
+        selectedDateTo,
+        selectedCategoryIds,
+        selectedAccountIds
+      )
+      getMerchantSpendTotals(selectedDateFrom, selectedDateTo)
     }
   }, [
     user,
@@ -341,7 +341,7 @@ const Home = () => {
                   alignItems="center"
                 >
                   <Title className="truncate">
-                    Spendings by Category - {currentMonth?.name}cioin
+                    Spendings by Category - {currentMonth?.name}
                   </Title>
                   <Dropdown
                     onValueChange={(value) =>
@@ -404,7 +404,7 @@ const Home = () => {
                   />
                 </Flex>
                 <Col numColSpan={1} numColSpanLg={1}>
-                  <List className="h-96 overflow-scroll">
+                  <List>
                     {currentMonthCategories.map((category) => {
                       return (
                         <ListItem key={category.name}>
