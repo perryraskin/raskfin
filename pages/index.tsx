@@ -233,13 +233,13 @@ const Home = () => {
   )
   React.useEffect(() => {
     if (user) {
-      getTransactions(
-        selectedDateFrom,
-        selectedDateTo,
-        selectedCategoryIds,
-        selectedAccountIds
-      )
-      getMerchantSpendTotals(selectedDateFrom, selectedDateTo)
+      // getTransactions(
+      //   selectedDateFrom,
+      //   selectedDateTo,
+      //   selectedCategoryIds,
+      //   selectedAccountIds
+      // )
+      // getMerchantSpendTotals(selectedDateFrom, selectedDateTo)
     }
   }, [
     user,
@@ -402,91 +402,44 @@ const Home = () => {
                   />
                 </Flex>
                 <Col numColSpan={1} numColSpanLg={1}>
-                  <div className="hidden sm:block">
-                    <List className="h-96 overflow-scroll">
-                      {currentMonthCategories.map((category) => {
-                        return (
-                          <ListItem key={category.name}>
-                            <Flex
-                              justifyContent="start"
-                              className="truncate space-x-4"
-                            >
-                              <Icon
-                                variant="light"
-                                icon={category.icon || QuestionMarkCircleIcon}
-                                size="md"
-                                color={category.color}
-                              />
-                              <div className="truncate">
-                                <Text className="truncate">
-                                  <Bold className="text-gray-700">
-                                    {capitalize(
-                                      category.name || "uncategorized"
-                                    )}
-                                  </Bold>
-                                </Text>
-                                <Text className="truncate">
-                                  {`${category.numTransactions} transactions`}
-                                </Text>
-                              </div>
-                            </Flex>
-                            <Text
-                              className={classNames(
-                                category.amount < 0 ? "text-green-600" : ""
-                              )}
-                            >
-                              {numeral(category.amount)
-                                .format("$0,0.00")
-                                .replace("-", "")}
-                            </Text>
-                          </ListItem>
-                        )
-                      })}
-                    </List>
-                  </div>
-
-                  <div className="sm:hidden">
-                    <List className="h-96 overflow-scroll">
-                      {currentMonthCategories.map((category) => {
-                        return (
-                          <ListItem key={category.name}>
-                            <Flex
-                              justifyContent="start"
-                              className="truncate space-x-4"
-                            >
-                              <Icon
-                                variant="light"
-                                icon={category.icon || QuestionMarkCircleIcon}
-                                size="md"
-                                color={category.color}
-                              />
-                              <div className="truncate">
-                                <Text className="truncate">
-                                  <Bold className="text-gray-700">
-                                    {capitalize(
-                                      category.name || "uncategorized"
-                                    )}
-                                  </Bold>
-                                </Text>
-                                <Text className="truncate">
-                                  {`${category.numTransactions} transactions`}
-                                </Text>
-                              </div>
-                            </Flex>
-                            <Text
-                              className={classNames(
-                                category.amount < 0 ? "text-green-600" : ""
-                              )}
-                            >
-                              {numeral(category.amount)
-                                .format("$0,0.00")
-                                .replace("-", "")}
-                            </Text>
-                          </ListItem>
-                        )
-                      })}
-                    </List>
-                  </div>
+                  <List className="h-96 overflow-scroll">
+                    {currentMonthCategories.map((category) => {
+                      return (
+                        <ListItem key={category.name}>
+                          <Flex
+                            justifyContent="start"
+                            className="truncate space-x-4"
+                          >
+                            <Icon
+                              variant="light"
+                              icon={category.icon || QuestionMarkCircleIcon}
+                              size="md"
+                              color={category.color}
+                            />
+                            <div className="truncate">
+                              <Text className="truncate">
+                                <Bold className="text-gray-700">
+                                  {capitalize(category.name || "uncategorized")}
+                                </Bold>
+                              </Text>
+                              <Text className="truncate">
+                                {`${category.numTransactions} transactions`}
+                              </Text>
+                            </div>
+                          </Flex>
+                          <Text
+                            className={classNames(
+                              category.amount < 0 ? "text-green-600" : ""
+                            )}
+                          >
+                            {numeral(category.amount)
+                              .format("$0,0.00")
+                              .replace("-", "")}
+                          </Text>
+                        </ListItem>
+                      )
+                    })}
+                  </List>
                 </Col>
               </Grid>
             </Card>
@@ -626,68 +579,56 @@ const Home = () => {
               />
             </div>
 
-            {/* ACCORDION LIST FOR MOBILE */}
-            {/* <AccordionList className="mt-4 mx-auto sm:hidden">
-              {loadingData ? (
-                <div>
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Accordion key={i}>
-                      <AccordionHeader>
-                        <div className="animate-pulse flex space-x-4">
-                          <div className="flex-1 space-y-4 py-1"></div>
-                        </div>
-                        <AccordionBody>
-                          <div className="animate-pulse flex space-x-4">
-                            <div className="flex-1 space-y-4 py-1">
-                              <div className="h-4 bg-slate-300 rounded w-3/4"></div>
-                              <div className="space-y-2">
-                                <div className="h-4 bg-slate-300 rounded"></div>
-                                <div className="h-4 bg-slate-300 rounded w-5/6"></div>
-                              </div>
-                            </div>
-                          </div>
-                        </AccordionBody>
-                      </AccordionHeader>
-                    </Accordion>
-                  ))}
-                </div>
-              ) : (
-                <div>
-                  {transactions.map((transaction) => (
-                    <Accordion key={transaction.id}>
-                      <AccordionHeader className="text-xs text-left">
-                        {transaction.name}
-                        <span className="ml-4 text-gray-500">
-                          {numeral(transaction.price).format("$0,0.00")}
-                        </span>
-                      </AccordionHeader>
-                      <AccordionBody>
-                        {numeral(transaction.price).format("$0,0.00")}
-                        <br />
-                        {capitalize(transaction.category || "uncategorized")}
-                        <br />
-                        {dayjs(transaction.date).utc().format("MM/DD/YYYY")}
-                        <br />
-                        {transaction.Account.lastFour}
-                        <br />
-                        <button
-                          onClick={() => {
-                            setSelectedTransaction(transaction)
-                            setOpenTransactionDialog(true)
-                          }}
-                          className="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded"
-                        >
-                          Edit
-                        </button>
-                      </AccordionBody>
-                    </Accordion>
-                  ))}
-                </div>
-              )}
-            </AccordionList> */}
+            {/* LIST FOR MOBILE */}
+            <List className="mt-8 sm:hidden">
+              {transactions.map((transaction) => {
+                const category =
+                  categoryIconDict[transaction.category as string]
+                return (
+                  <ListItem
+                    key={transaction.id}
+                    onClick={() => {
+                      setSelectedTransaction(transaction)
+                      setOpenTransactionDialog(true)
+                    }}
+                  >
+                    <Flex justifyContent="start" className="truncate space-x-4">
+                      <Icon
+                        variant="light"
+                        icon={category.icon || QuestionMarkCircleIcon}
+                        size="md"
+                        color={category.color}
+                      />
+                      <div className="truncate">
+                        <Text className="truncate text-gray-700 font-medium text-xs">
+                          {transaction.name}
+                        </Text>
+                        <Text className="truncate">
+                          <span
+                            className={classNames(
+                              parseFloat(transaction.price) < 0
+                                ? "text-green-600"
+                                : ""
+                            )}
+                          >
+                            {numeral(transaction.price)
+                              .format("$0,0.00")
+                              .replace("-", "")}{" "}
+                          </span>
+                          ({transaction.Account.lastFour})
+                        </Text>
+                      </div>
+                    </Flex>
+                    <Text className="text-xs">
+                      {dayjs(transaction.date).utc().format("MMM D")}
+                    </Text>
+                  </ListItem>
+                )
+              })}
+            </List>
 
             {/* TABLE FOR DESKTOP */}
-            <Table className="mt-6">
+            <Table className="mt-6 hidden sm:block">
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
