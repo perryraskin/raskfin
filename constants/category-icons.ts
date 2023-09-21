@@ -18,6 +18,7 @@ import {
   ReceiptPercentIcon,
   HeartIcon,
   ScissorsIcon,
+  WrenchIcon,
 } from "@heroicons/react/24/solid"
 import { Color } from "@tremor/react"
 
@@ -63,8 +64,8 @@ export const categoryIconDict: CategoryIconDict = {
     color: "orange",
   },
   service: {
-    icon: BoltIcon,
-    color: "rose",
+    icon: WrenchIcon,
+    color: "sky",
   },
   dining: {
     icon: ReceiptPercentIcon,
