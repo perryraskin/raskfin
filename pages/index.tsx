@@ -609,7 +609,7 @@ const Home = () => {
                           <span
                             className={classNames(
                               parseFloat(transaction.price) < 0
-                                ? "text-green-600"
+                                ? "text-green-600 font-medium"
                                 : ""
                             )}
                           >
