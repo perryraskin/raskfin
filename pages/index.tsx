@@ -593,19 +593,42 @@ const Home = () => {
                       setSelectedTransaction(transaction)
                       setOpenTransactionDialog(true)
                     }}
+                    className={classNames(
+                      transaction.status === "pending"
+                        ? "text-gray-200 italic"
+                        : "text-gray-800"
+                    )}
                   >
                     <Flex justifyContent="start" className="truncate space-x-4">
                       <Icon
                         variant="light"
                         icon={category.icon || QuestionMarkCircleIcon}
                         size="md"
-                        color={category.color}
+                        color={
+                          transaction.status === "pending"
+                            ? "gray"
+                            : category.color
+                        }
                       />
                       <div className="truncate">
-                        <Text className="truncate text-gray-700 font-medium text-xs">
+                        <Text
+                          className={classNames(
+                            "truncate font-medium text-xs",
+                            transaction.status === "pending"
+                              ? "text-gray-400 italic"
+                              : "text-gray-800"
+                          )}
+                        >
                           {transaction.name}
                         </Text>
-                        <Text className="truncate">
+                        <Text
+                          className={classNames(
+                            "truncate",
+                            transaction.status === "pending"
+                              ? "text-gray-400 italic"
+                              : ""
+                          )}
+                        >
                           <span
                             className={classNames(
                               parseFloat(transaction.price) < 0
@@ -621,7 +644,14 @@ const Home = () => {
                         </Text>
                       </div>
                     </Flex>
-                    <Text className="text-xs">
+                    <Text
+                      className={classNames(
+                        "text-xs",
+                        transaction.status === "pending"
+                          ? "text-gray-400 italic"
+                          : ""
+                      )}
+                    >
                       {dayjs(transaction.date).utc().format("MMM D")}
                     </Text>
                   </ListItem>
@@ -668,14 +698,21 @@ const Home = () => {
                         "transition-all cursor-pointer",
                         parseFloat(transaction.price) < 0
                           ? "hover:bg-green-50"
-                          : "hover:bg-slate-50"
+                          : "hover:bg-slate-50",
+                        transaction.status === "pending"
+                          ? "text-gray-400 italic"
+                          : "text-gray-800"
                       )}
                       onClick={() => {
                         setSelectedTransaction(transaction)
                         setOpenTransactionDialog(true)
                       }}
                     >
-                      <TableCell className="text-gray-800 max-w-[10rem] sm:max-w-none truncate sm:whitespace-normal">
+                      <TableCell
+                        className={classNames(
+                          "max-w-[10rem] sm:max-w-none truncate sm:whitespace-normal"
+                        )}
+                      >
                         {transaction.name}
                       </TableCell>
                       <TableCell
@@ -683,22 +720,20 @@ const Home = () => {
                           "text-right",
                           parseFloat(transaction.price) < 0
                             ? "text-green-600 font-medium"
-                            : "text-gray-800"
+                            : ""
                         )}
                       >
                         {numeral(transaction.price)
                           .format("$0,0.00")
                           .replace("-", "")}
                       </TableCell>
-                      <TableCell className="text-gray-800">
+                      <TableCell>
                         {capitalize(transaction.category || "uncategorized")}
                       </TableCell>
-                      <TableCell className="text-gray-800">
+                      <TableCell>
                         {dayjs(transaction.date).utc().format("MM/DD/YYYY")}
                       </TableCell>
-                      <TableCell className="text-gray-800">
-                        {transaction.Account.lastFour}
-                      </TableCell>
+                      <TableCell>{transaction.Account.lastFour}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
