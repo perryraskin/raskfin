@@ -34,19 +34,20 @@ model merchants {
 }
 
 model accounts {
-  id              String         @id @default(uuid())
-  name            String?
-  lastFour        String?        @map("last_four")
-  institutionId   String?        @map("institution_id")
-  institutionName String?        @map("institution_name")
-  status          String?
-  type            String?
-  subtype         String?
-  currency        String?
-  enrollmentId    String?        @map("enrollment_id")
-  tellerAccountId String?        @unique @map("teller_account_id")
-  userId          String?        @map("user_id")
-  Transactions    transactions[]
+  id                   String         @id @default(uuid())
+  name                 String?
+  lastFour             String?        @map("last_four")
+  institutionId        String?        @map("institution_id")
+  institutionName      String?        @map("institution_name")
+  status               String?
+  type                 String?
+  subtype              String?
+  currency             String?
+  enrollmentId         String?        @map("enrollment_id")
+  tellerAccountId      String?        @unique @map("teller_account_id")
+  userId               String?        @map("user_id")
+  connectedBankAccount String?        @map("connected_bank_account")
+  Transactions         transactions[]
 }
 
 model rules {
