@@ -50,6 +50,9 @@ export default async function handler(
         },
         orderBy: [
           {
+            status: "asc",
+          },
+          {
             date: "desc",
           },
           {
