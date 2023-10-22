@@ -67,6 +67,7 @@ import {
   Account,
   CategoryStat,
   CategoryStatData,
+  ICurrentMonthFilters,
   MerchantSpendTotal,
   StatsResponse,
   Transaction,
@@ -75,12 +76,17 @@ import { categoryIconDict } from "@/constants/category-icons"
 import { capitalize, classNames, valueFormatter } from "@/helpers"
 import TransactionDialog from "@/components/TransactionDialog"
 import OpenAI from "openai"
+import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline"
 
 const Home = () => {
   const { user } = useUser()
   const [loadingSummary, setLoadingSummary] = React.useState(true)
   const [loadingData, setLoadingData] = React.useState(true)
   const [selectedView, setSelectedView] = React.useState("Summary")
+  const [currentMonthFilters, setCurrentMonthFilters] =
+    React.useState<ICurrentMonthFilters>({
+      includePendingTransactions: false,
+    })
   const [currentMonth, setCurrentMonth] = React.useState<CategoryStat>()
   const [currentMonthCategories, setCurrentMonthCategories] = React.useState<
     CategoryStatData[]
@@ -160,47 +166,47 @@ const Home = () => {
     setLoadingData(false)
   }
 
-  React.useEffect(() => {
-    const getMonths = async () => {
-      setLoadingSummary(true)
-      const statsRes = await fetch("/api/stats")
-      const stats: StatsResponse = await statsRes.json()
-      const _currentMonth = stats.months[stats.months.length - 1]
-      _currentMonth.dataList.forEach((category) => {
+  const getMonths = async () => {
+    setLoadingSummary(true)
+    const statsRes = await fetch(
+      `/api/stats?includePending=${currentMonthFilters.includePendingTransactions.toString()}`
+    )
+    const stats: StatsResponse = await statsRes.json()
+    const _currentMonth = stats.months[stats.months.length - 1]
+    _currentMonth.dataList.forEach((category) => {
+      // @ts-ignore
+      // console.log(category)
+
+      // @ts-ignore
+      category.icon = categoryIconDict[category.name || "uncategorized"]?.icon
+      // @ts-ignore
+      category.color = categoryIconDict[category.name || "uncategorized"]?.color
+    })
+    console.log(_currentMonth)
+    setCurrentMonth(_currentMonth)
+
+    const _months = JSON.parse(JSON.stringify(stats.months)) as CategoryStat[]
+    _months.forEach((month) => {
+      const _3rdAmount = month.dataList[2]?.amount || 0
+      month.dataList.forEach((category, i) => {
+        if (category.amount < _3rdAmount) category.showInStatCard = false
+        else category.showInStatCard = true
         // @ts-ignore
         // console.log(category)
-
         // @ts-ignore
         category.icon = categoryIconDict[category.name || "uncategorized"]?.icon
         // @ts-ignore
         category.color =
           categoryIconDict[category.name || "uncategorized"]?.color
       })
-      console.log(_currentMonth)
-      setCurrentMonth(_currentMonth)
+    })
 
-      const _months = JSON.parse(JSON.stringify(stats.months)) as CategoryStat[]
-      _months.forEach((month) => {
-        const _3rdAmount = month.dataList[2]?.amount || 0
-        month.dataList.forEach((category, i) => {
-          if (category.amount < _3rdAmount) category.showInStatCard = false
-          else category.showInStatCard = true
-          // @ts-ignore
-          // console.log(category)
-          // @ts-ignore
-          category.icon =
-            categoryIconDict[category.name || "uncategorized"]?.icon
-          // @ts-ignore
-          category.color =
-            categoryIconDict[category.name || "uncategorized"]?.color
-        })
-      })
+    console.log(_months)
+    setMonths(_months)
+    setLoadingSummary(false)
+  }
 
-      console.log(_months)
-      setMonths(_months)
-      setLoadingSummary(false)
-    }
-
+  React.useEffect(() => {
     async function init() {
       await getAccounts()
       await getCategories()
@@ -212,7 +218,11 @@ const Home = () => {
       console.log("user:", user)
       init()
     }
-  }, [user])
+  }, [user, currentMonthFilters.includePendingTransactions])
+
+  // React.useEffect(() => {
+  //   getMonths()
+  // }, [currentMonthFilters.includePendingTransactions])
 
   const [dateRangeValue, setDateRangeValue] =
     React.useState<DateRangePickerValue>([
@@ -343,6 +353,39 @@ const Home = () => {
                   <Title className="truncate">
                     Spendings by Category - {currentMonth?.name}
                   </Title>
+                  <button
+                    className={classNames(
+                      "absolute right-[22rem] inline-flex items-center whitespace-nowrap rounded-full px-2 py-2 text-xs font-medium sm:px-3",
+                      currentMonthFilters.includePendingTransactions
+                        ? "text-green-700 bg-green-50 hover:bg-green-100"
+                        : "text-gray-500 bg-gray-50 hover:bg-gray-100",
+                      "transition-all ease-in-out duration-150"
+                    )}
+                    onClick={() =>
+                      setCurrentMonthFilters({
+                        ...currentMonthFilters,
+                        includePendingTransactions:
+                          !currentMonthFilters.includePendingTransactions,
+                      })
+                    }
+                  >
+                    {currentMonthFilters.includePendingTransactions ? (
+                      <CheckIcon
+                        className={classNames("h-4 w-4 flex-shrink-0 sm:-ml-1")}
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <XMarkIcon
+                        className={classNames("h-4 w-4 flex-shrink-0 sm:-ml-1")}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <span
+                      className={classNames("hidden sm:ml-1 truncate sm:block")}
+                    >
+                      Include pending transactions
+                    </span>
+                  </button>
                   <Dropdown
                     onValueChange={(value) =>
                       setCurrentMonth(
@@ -367,6 +410,37 @@ const Home = () => {
                 <Title className="truncate">
                   Spendings by Category - {currentMonth?.name}
                 </Title>
+                <button
+                  className={classNames(
+                    "my-1 inline-flex items-center whitespace-nowrap rounded-full px-2 py-2 text-xs font-medium sm:px-3",
+                    currentMonthFilters.includePendingTransactions
+                      ? "text-green-700 bg-green-50 hover:bg-green-100"
+                      : "text-gray-500 bg-gray-50 hover:bg-gray-100",
+                    "transition-all ease-in-out duration-150"
+                  )}
+                  onClick={() =>
+                    setCurrentMonthFilters({
+                      ...currentMonthFilters,
+                      includePendingTransactions:
+                        !currentMonthFilters.includePendingTransactions,
+                    })
+                  }
+                >
+                  {currentMonthFilters.includePendingTransactions ? (
+                    <CheckIcon
+                      className={classNames("h-4 w-4 flex-shrink-0 sm:-ml-1")}
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <XMarkIcon
+                      className={classNames("h-4 w-4 flex-shrink-0 sm:-ml-1")}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span className={classNames("ml-1 truncate")}>
+                    Include pending transactions
+                  </span>
+                </button>
                 <Dropdown
                   onValueChange={(value) =>
                     setCurrentMonth(

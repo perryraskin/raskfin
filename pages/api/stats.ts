@@ -30,6 +30,11 @@ export default async function handler(
     return res.status(401).json({ id: null })
   }
 
+  console.log(req.query)
+  const { includePending } = req.query
+  const transactionStatus =
+    includePending === "true" ? ["pending", "posted"] : ["posted", "-"]
+
   const today = dayjs()
   const threeMonthsAgoStart = today.subtract(3, "month").startOf("month")
   const twoMonthsAgoStart = today.subtract(2, "month").startOf("month")
@@ -48,6 +53,9 @@ export default async function handler(
     t.user_id = ${userId}
     AND t.date >= ${threeMonthsAgoStart.toDate()}
     AND t.type != 'payment'
+    AND (t.status = ${transactionStatus[0]} OR t.status = ${
+    transactionStatus[1]
+  })
   GROUP BY
     month,
     category
