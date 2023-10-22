@@ -32,8 +32,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bd57b" />
         <meta name="msapplication-TileColor" content="#da532c" />
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#f1f5f9" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="manifest" href="/manifest.json" />
         <link
           href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.css"
           rel="stylesheet"
