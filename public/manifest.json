@@ -1,0 +1,28 @@
+{
+  "name": "raskFin",
+  "short_name": "raskFin",
+  "description": "A niche way to manage finances.",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/?source=pwa",
+  "orientation": "portrait",
+  "display": "standalone",
+  "scope": "/"
+}
