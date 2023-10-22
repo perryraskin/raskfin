@@ -12,11 +12,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>raskFin</title>
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico" />
         <link
           rel="icon"
           type="image/png"
