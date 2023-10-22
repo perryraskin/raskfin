@@ -4,7 +4,7 @@
   "description": "A niche way to manage finances.",
   "icons": [
     {
-      "src": "/apple-touch-icon.png",
+      "src": "/favicon.ico",
       "type": "image/png",
       "sizes": "180x180"
     },
