@@ -1,5 +1,9 @@
 import { Color } from "@tremor/react"
 
+export interface ICurrentMonthFilters {
+  includePendingTransactions: boolean
+}
+
 export interface CategoryStatData {
   showInStatCard?: boolean
   name?: string
