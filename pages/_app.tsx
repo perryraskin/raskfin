@@ -9,7 +9,7 @@ import type { AppProps } from "next/app"
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ClerkProvider {...pageProps}>
+    <>
       <Head>
         <title>raskFin</title>
         <link
@@ -40,11 +40,13 @@ export default function App({ Component, pageProps }: AppProps) {
           rel="stylesheet"
         />
       </Head>
-      <Script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js" />
-      <Script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js" />
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </ClerkProvider>
+      <ClerkProvider {...pageProps}>
+        <Script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js" />
+        <Script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js" />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </ClerkProvider>
+    </>
   )
 }
