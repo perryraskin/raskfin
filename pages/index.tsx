@@ -41,6 +41,7 @@ import {
   Accordion,
   AccordionHeader,
   AccordionBody,
+  ProgressBar,
 } from "@tremor/react"
 import {
   BriefcaseIcon,
@@ -69,6 +70,7 @@ import {
   CategoryStatData,
   ICurrentMonthFilters,
   MerchantSpendTotal,
+  SignupBonus,
   StatsResponse,
   Transaction,
 } from "@/types"
@@ -77,6 +79,7 @@ import { capitalize, classNames, valueFormatter } from "@/helpers"
 import TransactionDialog from "@/components/TransactionDialog"
 import OpenAI from "openai"
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline"
+import Image from "next/image"
 
 const Home = () => {
   const { user } = useUser()
@@ -98,6 +101,7 @@ const Home = () => {
 
   const [months, setMonths] = React.useState<CategoryStat[]>([])
   const [accounts, setAccounts] = React.useState<Account[]>([])
+  const [signupBonuses, setSignupBonuses] = React.useState<SignupBonus[]>([])
   const [categories, setCategories] = React.useState<string[]>([])
   const [transactions, setTransactions] = React.useState<Transaction[]>([])
   const [merchantSpendTotals, setMerchantSpendTotals] = React.useState<
@@ -108,6 +112,12 @@ const Home = () => {
     const res = await fetch("/api/accounts")
     const data = await res.json()
     setAccounts(data)
+  }
+
+  async function getSignupBonuses() {
+    const res = await fetch("/api/signupBonuses")
+    const data = await res.json()
+    setSignupBonuses(data)
   }
 
   async function getCategories() {
@@ -209,6 +219,7 @@ const Home = () => {
   React.useEffect(() => {
     async function init() {
       await getAccounts()
+      await getSignupBonuses()
       await getCategories()
       await getMonths()
       await getTransactions()
@@ -291,6 +302,64 @@ const Home = () => {
       <Text className="px-4 sm:px-0">
         Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
       </Text>
+      {signupBonuses.length > 0 && (
+        <Title className="mt-4 px-4 sm:px-0">Pending Signup Bonuses</Title>
+      )}
+
+      {signupBonuses.map((signupBonus) => {
+        const percentageSpend = Math.round(
+          (signupBonus.currentSpend / signupBonus.minSpend) * 100
+        )
+        if (signupBonus.currentSpend < signupBonus.minSpend) {
+          return (
+            <Card
+              key={signupBonus.id}
+              className="sm:max-w-sm mt-2 rounded-none sm:rounded-lg"
+            >
+              {/* <Image
+                src={`https://bank.green/img/logos/chase.png`}
+                width={25}
+                height={25}
+                alt="Chase Logo"
+                className="absolute top-3 right-4"
+              />
+              <Text className="mt-4 font-medium">
+                {signupBonus.Account?.institutionName}{" "}
+                {signupBonus.Account?.name}
+              </Text> */}
+              <Flex className="-mt-1 justify-normal">
+                <Image
+                  src={`https://bank.green/img/logos/chase.png`}
+                  width={18}
+                  height={18}
+                  alt="Chase Logo"
+                  className="mr-1.5"
+                />
+                <Text className="font-medium">
+                  {signupBonus.Account?.institutionName}{" "}
+                  {signupBonus.Account?.name}
+                </Text>
+              </Flex>
+              <Flex className="mt-4">
+                <Text>
+                  {numeral(signupBonus.currentSpend).format("$0,0.00")} &bull;{" "}
+                  {percentageSpend}%
+                </Text>
+                <Text>{numeral(signupBonus.minSpend).format("$0,0")}</Text>
+              </Flex>
+              <ProgressBar
+                percentageValue={percentageSpend}
+                color="blue"
+                className="mt-3"
+              />
+              <Text className="mt-1 text-xs">
+                Spend {numeral(signupBonus.minSpend).format("$0,0")} by{" "}
+                {dayjs(signupBonus.spendByDate).format("MMM D, YYYY")}.
+              </Text>
+            </Card>
+          )
+        }
+      })}
       <TabList
         defaultValue="Summary"
         onValueChange={(value) => setSelectedView(value)}

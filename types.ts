@@ -69,3 +69,13 @@ export interface Account {
   enrollmentId?: string
   tellerAccountId?: string
 }
+
+export interface SignupBonus {
+  id: string
+  dateCreated: Date
+  dateUpdated: Date
+  Account: Account
+  minSpend: number
+  currentSpend: number
+  spendByDate: Date
+}

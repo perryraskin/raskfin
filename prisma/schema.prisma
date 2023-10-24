@@ -34,19 +34,20 @@ model merchants {
 }
 
 model accounts {
-  id              String         @id @default(uuid())
+  id              String           @id @default(uuid())
   name            String?
-  lastFour        String?        @map("last_four")
-  institutionId   String?        @map("institution_id")
-  institutionName String?        @map("institution_name")
+  lastFour        String?          @map("last_four")
+  institutionId   String?          @map("institution_id")
+  institutionName String?          @map("institution_name")
   status          String?
   type            String?
   subtype         String?
   currency        String?
-  enrollmentId    String?        @map("enrollment_id")
-  tellerAccountId String?        @unique @map("teller_account_id")
-  userId          String?        @map("user_id")
+  enrollmentId    String?          @map("enrollment_id")
+  tellerAccountId String?          @unique @map("teller_account_id")
+  userId          String?          @map("user_id")
   Transactions    transactions[]
+  SignupBonuses   signup_bonuses[]
 }
 
 model rules {
@@ -59,4 +60,14 @@ model rules {
   keywords     String?
   fieldToSet   String?  @map("field_to_set")
   valueToSet   String?  @map("value_to_set")
+}
+
+model signup_bonuses {
+  id          String    @id @default(uuid())
+  dateCreated DateTime  @default(now()) @map("date_created")
+  dateUpdated DateTime  @default(now()) @updatedAt @map("date_updated")
+  Account     accounts? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  accountId   String?   @map("account_id")
+  minSpend    Decimal   @default(0) @map("min_spend") @db.Decimal(10, 2)
+  spendByDate DateTime  @default(now()) @map("spend_by_date")
 }
