@@ -298,13 +298,13 @@ const Home = () => {
   if (!user) return <></>
   return (
     <main className="max-w-7xl mx-auto mt-10 xl:px-0 bg-slate-100">
-      <Title className="px-4 sm:px-0">Dashboard</Title>
+      {/* <Title className="px-4 sm:px-0">Dashboard</Title>
       <Text className="px-4 sm:px-0">
         Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
-      </Text>
-      {signupBonuses.length > 0 && (
+      </Text> */}
+      {/* {signupBonuses.length > 0 && (
         <Title className="mt-4 px-4 sm:px-0">Pending Signup Bonuses</Title>
-      )}
+      )} */}
 
       {signupBonuses.map((signupBonus) => {
         const percentageSpend = Math.round(
