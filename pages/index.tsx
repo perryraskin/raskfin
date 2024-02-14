@@ -305,21 +305,21 @@ const Home = () => {
       {/* {signupBonuses.length > 0 && (
         <Title className="mt-4 px-4 sm:px-0">Pending Signup Bonuses</Title>
       )} */}
-
-      {signupBonuses.map((signupBonus) => {
-        const percentageSpend = Math.round(
-          (signupBonus.currentSpend / signupBonus.minSpend) * 100
-        )
-        if (
-          signupBonus.currentSpend < signupBonus.minSpend ||
-          signupBonus.spendByDate < dayjs().toDate()
-        ) {
-          return (
-            <Card
-              key={signupBonus.id}
-              className="sm:max-w-sm mt-2 rounded-none sm:rounded-lg"
-            >
-              {/* <Image
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        {signupBonuses.map((signupBonus) => {
+          const percentageSpend = Math.round(
+            (signupBonus.currentSpend / signupBonus.minSpend) * 100
+          )
+          if (
+            signupBonus.currentSpend < signupBonus.minSpend &&
+            dayjs(signupBonus.spendByDate).isAfter(dayjs())
+          ) {
+            return (
+              <Card
+                key={signupBonus.id}
+                className="sm:max-w-sm mt-2 rounded-none sm:rounded-lg"
+              >
+                {/* <Image
                 src={`https://bank.green/img/logos/chase.png`}
                 width={25}
                 height={25}
@@ -330,39 +330,40 @@ const Home = () => {
                 {signupBonus.Account?.institutionName}{" "}
                 {signupBonus.Account?.name}
               </Text> */}
-              <Flex className="-mt-1 justify-normal">
-                <Image
-                  src={`https://bank.green/img/logos/chase.png`}
-                  width={18}
-                  height={18}
-                  alt="Chase Logo"
-                  className="mr-1.5"
+                <Flex className="-mt-1 justify-normal">
+                  <Image
+                    src={`https://bank.green/img/logos/chase.png`}
+                    width={18}
+                    height={18}
+                    alt="Chase Logo"
+                    className="mr-1.5"
+                  />
+                  <Text className="font-medium">
+                    {signupBonus.Account?.institutionName}{" "}
+                    {signupBonus.Account?.name}
+                  </Text>
+                </Flex>
+                <Flex className="mt-4">
+                  <Text>
+                    {numeral(signupBonus.currentSpend).format("$0,0.00")} &bull;{" "}
+                    {percentageSpend}%
+                  </Text>
+                  <Text>{numeral(signupBonus.minSpend).format("$0,0")}</Text>
+                </Flex>
+                <ProgressBar
+                  percentageValue={percentageSpend}
+                  color="blue"
+                  className="mt-3"
                 />
-                <Text className="font-medium">
-                  {signupBonus.Account?.institutionName}{" "}
-                  {signupBonus.Account?.name}
+                <Text className="mt-1 text-xs">
+                  Spend {numeral(signupBonus.minSpend).format("$0,0")} by{" "}
+                  {dayjs(signupBonus.spendByDate).format("MMM D, YYYY")}.
                 </Text>
-              </Flex>
-              <Flex className="mt-4">
-                <Text>
-                  {numeral(signupBonus.currentSpend).format("$0,0.00")} &bull;{" "}
-                  {percentageSpend}%
-                </Text>
-                <Text>{numeral(signupBonus.minSpend).format("$0,0")}</Text>
-              </Flex>
-              <ProgressBar
-                percentageValue={percentageSpend}
-                color="blue"
-                className="mt-3"
-              />
-              <Text className="mt-1 text-xs">
-                Spend {numeral(signupBonus.minSpend).format("$0,0")} by{" "}
-                {dayjs(signupBonus.spendByDate).format("MMM D, YYYY")}.
-              </Text>
-            </Card>
-          )
-        }
-      })}
+              </Card>
+            )
+          }
+        })}
+      </div>
       <TabList
         defaultValue="Summary"
         onValueChange={(value) => setSelectedView(value)}
