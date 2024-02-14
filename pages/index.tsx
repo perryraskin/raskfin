@@ -310,7 +310,10 @@ const Home = () => {
         const percentageSpend = Math.round(
           (signupBonus.currentSpend / signupBonus.minSpend) * 100
         )
-        if (signupBonus.currentSpend < signupBonus.minSpend) {
+        if (
+          signupBonus.currentSpend < signupBonus.minSpend ||
+          signupBonus.spendByDate < dayjs().toDate()
+        ) {
           return (
             <Card
               key={signupBonus.id}
@@ -745,12 +748,12 @@ const Home = () => {
                     <Flex justifyContent="start" className="truncate space-x-4">
                       <Icon
                         variant="light"
-                        icon={category.icon || QuestionMarkCircleIcon}
+                        icon={category?.icon || QuestionMarkCircleIcon}
                         size="md"
                         color={
                           transaction.status === "pending"
                             ? "gray"
-                            : category.color
+                            : category?.color || "slate"
                         }
                       />
                       <div className="truncate">
