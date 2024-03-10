@@ -561,7 +561,7 @@ const Home = () => {
                           >
                             <Icon
                               variant="light"
-                              icon={category.icon || QuestionMarkCircleIcon}
+                              icon={category?.icon || QuestionMarkCircleIcon}
                               size="md"
                               color={category.color}
                             />
