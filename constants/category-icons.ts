@@ -19,6 +19,7 @@ import {
   HeartIcon,
   ScissorsIcon,
   WrenchIcon,
+  AcademicCapIcon,
 } from "@heroicons/react/24/solid"
 import { Color } from "@tremor/react"
 
@@ -98,5 +99,9 @@ export const categoryIconDict: CategoryIconDict = {
   personal: {
     icon: ScissorsIcon,
     color: "yellow",
+  },
+  tuition: {
+    icon: AcademicCapIcon,
+    color: "blue",
   },
 }
