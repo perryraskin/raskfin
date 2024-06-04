@@ -331,13 +331,24 @@ const Home = () => {
                 {signupBonus.Account?.name}
               </Text> */}
                 <Flex className="-mt-1 justify-normal">
-                  <Image
-                    src={`https://bank.green/img/logos/chase.png`}
-                    width={18}
-                    height={18}
-                    alt="Chase Logo"
-                    className="mr-1.5"
-                  />
+                  {signupBonus.Account?.institutionName ===
+                  "Bank of America" ? (
+                    <Image
+                      src={`https://asset.brandfetch.io/ide4lTCz-B/idRZ0af8Xf.png`}
+                      width={18}
+                      height={18}
+                      alt="Chase Logo"
+                      className="mr-1.5"
+                    />
+                  ) : (
+                    <Image
+                      src={`https://bank.green/img/logos/chase.png`}
+                      width={18}
+                      height={18}
+                      alt="Chase Logo"
+                      className="mr-1.5"
+                    />
+                  )}
                   <Text className="font-medium">
                     {signupBonus.Account?.institutionName}{" "}
                     {signupBonus.Account?.name}
