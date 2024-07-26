@@ -104,4 +104,8 @@ export const categoryIconDict: CategoryIconDict = {
     icon: AcademicCapIcon,
     color: "blue",
   },
+  gas: {
+    icon: BoltIcon,
+    color: "orange",
+  },
 }
