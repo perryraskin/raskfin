@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    domains: ["bank.green", "asset.brandfetch.io"],
+    domains: ["bank.green", "asset.brandfetch.io", "cdn-icons-png.freepik.com"],
   },
 }
 

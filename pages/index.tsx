@@ -337,7 +337,16 @@ const Home = () => {
                       src={`https://asset.brandfetch.io/ide4lTCz-B/idRZ0af8Xf.png`}
                       width={18}
                       height={18}
-                      alt="Chase Logo"
+                      alt="Bank of America Logo"
+                      className="mr-1.5"
+                    />
+                  ) : signupBonus.Account?.institutionName ===
+                    "American Express" ? (
+                    <Image
+                      src={`https://cdn-icons-png.freepik.com/256/5968/5968245.png?semt=ais_hybrid`}
+                      width={18}
+                      height={18}
+                      alt="American Express Logo"
                       className="mr-1.5"
                     />
                   ) : (
