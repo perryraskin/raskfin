@@ -38,7 +38,10 @@ export default async function handler(
       signupBonuses.forEach((signupBonus) => {
         let currentSpend = 0.0
         const transactions = matchingTransactions.filter(
-          (t) => t.accountId === signupBonus.accountId && t.type !== "payment"
+          (t) =>
+            t.accountId === signupBonus.accountId &&
+            t.type !== "payment" &&
+            t.type !== "fee"
           // &&
           // t.status === "posted"
         )
